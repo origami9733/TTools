@@ -1,0 +1,18 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="TTools.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="BeautyDbIP" Type="System.String" Scope="User">
+      <Value Profile="(Default)">192.168.11.20</Value>
+    </Setting>
+    <Setting Name="BeautyDbName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">T_DB</Value>
+    </Setting>
+    <Setting Name="BeautyDbUser" Type="System.String" Scope="User">
+      <Value Profile="(Default)">techuser</Value>
+    </Setting>
+    <Setting Name="BeautyDbPass" Type="System.String" Scope="User">
+      <Value Profile="(Default)">beauty</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
