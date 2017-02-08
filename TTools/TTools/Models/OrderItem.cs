@@ -788,7 +788,7 @@ namespace TTools.Models
         #endregion
 
         //Beauty社のDBから受注情報をロードする
-        public ObservableCollection<OrderItem> Load(string sqlStr)
+        public DispatchObservableCollection<OrderItem> Load(string sqlStr)
         {
             //Setting読み込み
             string dbServer = Settings.Default.BeautyDbIP;
@@ -824,7 +824,7 @@ namespace TTools.Models
 
 
             //ObservableCollectionにマッピングする
-            ObservableCollection<OrderItem> items = new ObservableCollection<OrderItem>();
+            DispatchObservableCollection<OrderItem> items = new DispatchObservableCollection<OrderItem>();
             foreach (DataRow row in dataTable.Rows)
             {
                 items.Add(new OrderItem

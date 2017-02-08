@@ -76,8 +76,7 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    <ContentControl Margin="16" Content="{Binding ElementName=SideMenuItemsListBox,Path=SelectedItem.Content}" Grid.Row="1"/>
-                    <materialDesign:Snackbar MessageQueue="{materialDesign:MessageQueue}" x:Name="MainSnackbar" Grid.Row="1"/>
+                    <ContentControl Margin="0" Content="{Binding ElementName=SideMenuItemsListBox,Path=SelectedItem.Content}" Grid.Row="1"/>
                 </Grid>
             </DockPanel>
         </materialDesign:DrawerHost>

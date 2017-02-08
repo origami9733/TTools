@@ -1,23 +1,27 @@
-﻿using System;
+﻿using MaterialDesignThemes.Wpf;
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Windows;
-using System.Windows.Input;
 using System.ComponentModel;
 using System.Data;
-using System.Runtime.CompilerServices;
-using System.Windows.Data;
-using MaterialDesignThemes.Wpf;
-using TTools.Models;
-using TTools.EF;
-using TTools.Views;
 using System.Diagnostics;
-using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Data;
+using System.Windows.Input;
+using TTools.EF;
+using TTools.Models;
+using TTools.Views;
+using TTools.Domain;
 
 namespace TTools.ViewModels
 {
     public class ImportOrdersVM : INotifyPropertyChanged, INotifyDataErrorInfo
     {
+        #region Validation
         #region INotigyPropertyChangedインターフェース
         public event PropertyChangedEventHandler PropertyChanged;
         public void RaisePropertyChanged([CallerMemberName]string propertyName = "")
@@ -93,6 +97,15 @@ namespace TTools.ViewModels
             }
         }
 
+        #endregion
+
+        public ImportOrdersVM()
+        {
+            OpenDialogCommand = new AnotherCommandImplementation(OpenDialog);
+        }
+
+        #region 検索条件プロパティ
+
         //伝送フラグ
         private string _sendedFlag = string.Empty;
         public string SendedFlag
@@ -119,16 +132,21 @@ namespace TTools.ViewModels
                 ValidateProperty(nameof(UpdateDate), value);
             }
         }
+        
+        #endregion
 
-
+     
         //EFインスタンス
         private TechnoDB context = new TechnoDB();
+
 
         //OrderItemデータロード用
         private OrderItem orderItem = new OrderItem();
 
+
         //コレクションビュー
         private ICollectionView collectionView;
+
 
         //選択中カテゴリー
         private string _selectedCategory;
@@ -145,6 +163,7 @@ namespace TTools.ViewModels
             }
         }
 
+
         //選択中アイテム
         private OrderItem _selectedRowItem;
         public OrderItem SelectedRowItem
@@ -160,9 +179,10 @@ namespace TTools.ViewModels
             }
         }
 
+
         //オリジナルの受注コレクション
-        private ObservableCollection<OrderItem> _originalOrderItems;
-        public ObservableCollection<OrderItem> OriginalOrderItems
+        private DispatchObservableCollection<OrderItem> _originalOrderItems;
+        public DispatchObservableCollection<OrderItem> OriginalOrderItems
         {
             get { return _originalOrderItems; }
             set
@@ -175,9 +195,10 @@ namespace TTools.ViewModels
             }
         }
 
+
         //表示用の受注コレクション
-        private ObservableCollection<SelectableOrderItem> _displayOrderItems;
-        public ObservableCollection<SelectableOrderItem> DisplayOrderItems
+        private DispatchObservableCollection<SelectableOrderItem> _displayOrderItems;
+        public DispatchObservableCollection<SelectableOrderItem> DisplayOrderItems
         {
             get { return _displayOrderItems; }
             set
@@ -189,6 +210,7 @@ namespace TTools.ViewModels
                 }
             }
         }
+
 
         //チェックボックスカラムのヘッダのチェック状態
         private bool _checkBoxColumnIsChecked = false;
@@ -205,6 +227,9 @@ namespace TTools.ViewModels
 
         //カテゴリー毎のアイテム数カウンター
         private int? _allCategoryCount;
+        private int? _machineCategoryCount;
+        private int? _bsCategoryCount;
+        private int? _plCategoryCount;
         public int? AllCategoryCount
         {
             get { return _allCategoryCount; }
@@ -217,7 +242,6 @@ namespace TTools.ViewModels
                 }
             }
         }
-        private int? _machineCategoryCount;
         public int? MachineCategoryCount
         {
             get { return _machineCategoryCount; }
@@ -230,7 +254,6 @@ namespace TTools.ViewModels
                 }
             }
         }
-        private int? _bsCategoryCount;
         public int? BsCategoryCount
         {
             get { return _bsCategoryCount; }
@@ -243,7 +266,6 @@ namespace TTools.ViewModels
                 }
             }
         }
-        private int? _plCategoryCount;
         public int? PlCategoryCount
         {
             get { return _plCategoryCount; }
@@ -285,24 +307,7 @@ namespace TTools.ViewModels
                 PlCategoryCount = null;
         }
 
-
-        //開発用
-        private ICommand _testCommand;
-        public ICommand TestCommand
-        {
-            get
-            {
-                if (_testCommand == null)
-                {
-                    _testCommand = new RelayCommand<string>(ExecuteTestCommand);
-                }
-                return _testCommand;
-            }
-        }
-        private void ExecuteTestCommand(string arg)
-        {
-            CheckBoxColumnIsChecked = false;
-        }
+        
 
 
         //SQL文章の作成
@@ -339,38 +344,17 @@ namespace TTools.ViewModels
             }
         }
         private bool CanExecuteReloadCommand(string arg)
-        {   
-            if(_currentErrors.ContainsKey(nameof(UpdateDate))==true)
+        {
+            if (_currentErrors.ContainsKey(nameof(UpdateDate)) == true)
                 return false;
 
             return true;
         }
         private void ExecuteReloadCommand(String arg)
         {
-            //アンロード
-            ExecuteUnloadCommand();
-
-            var busyMessageDialog = new LoadingTimeMessageDialog
-            {
-                Message = { Text = "Loading..." }
-            };
-            DialogHost.Show(busyMessageDialog, "RootDialog");
-
-            //オリジナル受注コレクションの作成
-            OriginalOrderItems = orderItem.Load(MakeSQL());
-            //インポート画面用コレクションの作成
-            DisplayOrderItems = new ObservableCollection<SelectableOrderItem>();
-            foreach (var x in OriginalOrderItems)
-            {
-                DisplayOrderItems.Add(new SelectableOrderItem { OrderItem = x });
-            }
-
-            //カウンターリロード
-            this.ReloadCounters();
-
-            //フィルター用ビューの取得
-            collectionView = CollectionViewSource.GetDefaultView(DisplayOrderItems) as ListCollectionView;
         }
+
+
 
 
 
@@ -439,7 +423,6 @@ namespace TTools.ViewModels
             }
             CheckBoxColumnIsChecked = false;
         }
-
 
 
         //アンロードコマンド
@@ -546,8 +529,124 @@ namespace TTools.ViewModels
             }
             context.SaveChanges();
         }
+
+
+        #region Dialog
+
+        public ICommand OpenDialogCommand { get; }
+        public ICommand AcceptDialogCommand { get; }
+        public ICommand CancelDialogCommand { get; }
+
+        private bool _isDialogOpen;
+        private object _dialogContent;
+
+        public bool IsDialogOpen
+        {
+            get { return _isDialogOpen; }
+            set
+            {
+                if (_isDialogOpen == value) return;
+                _isDialogOpen = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public object DialogContent
+        {
+            get { return _dialogContent; }
+            set
+            {
+                if (_dialogContent == value) return;
+                _dialogContent = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private async void OpenDialog(object obj)
+        {
+            IsDialogOpen = true;
+
+            ExecuteUnloadCommand();
+
+
+            DialogContent = new LoadingTimeMessageDialog();
+            await Task.Factory.StartNew(() =>
+            {
+                OriginalOrderItems = orderItem.Load(MakeSQL());
+            })
+                .ContinueWith((t, _) =>
+                {
+                    this.DisplayOrderItems = new DispatchObservableCollection<SelectableOrderItem>();
+
+                    foreach (var x in this.OriginalOrderItems)
+                    {
+                        this.DisplayOrderItems.Add(new SelectableOrderItem { OrderItem = x });
+                    }
+
+                    IsDialogOpen = false;
+
+                },
+                null,
+                TaskScheduler.FromCurrentSynchronizationContext());
+
+
+            this.ReloadCounters();
+
+            collectionView = CollectionViewSource.GetDefaultView(DisplayOrderItems) as ListCollectionView;
+
+            MyMessageQueue = new SnackbarMessageQueue();
+            string msg;
+
+            if (AllCategoryCount == 0) msg = "受注データがありません。";
+                msg = "受注データの取得に成功しました。";
+
+            MyMessageQueue.Enqueue(msg, "確認", () => IsSnackbarActive = false);
+
+        }
+
+        private void CancelSample4Dialog(object obj)
+        {
+            IsDialogOpen = false;
+        }
+
+        #endregion
+
+
+        public SnackbarMessageQueue _myMessageQueue;
+        public SnackbarMessageQueue MyMessageQueue
+        {
+            get { return _myMessageQueue; }
+            set
+            {
+                _myMessageQueue = value;
+                RaisePropertyChanged();
+            }
+        }
+
+
+
+
+        #region Snackbar
+        private bool _isSnackbarActive;
+        public bool IsSnackbarActive
+        {
+            get { return _isSnackbarActive; }
+            set
+            {
+                _isSnackbarActive = value;
+                RaisePropertyChanged();
+            }
+        }
+        
+
+
+        #endregion
+
     }
 
+    #region EntityClass
+    
+    //VM用エンティティクラス
     public class SelectableOrderItem : INotifyPropertyChanged
     {
         private bool _isChecked = false;
@@ -563,6 +662,7 @@ namespace TTools.ViewModels
                 }
             }
         }
+
         private OrderItem _orderItem;
         public OrderItem OrderItem
         {
@@ -577,11 +677,28 @@ namespace TTools.ViewModels
             }
         }
 
+
+        private OrderItem _productCodeItem;
+        public OrderItem ProductCodeItem
+        {
+            get { return _productCodeItem; }
+            set
+            {
+                if (_productCodeItem != value)
+                {
+                    _productCodeItem = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
         public void RaisePropertyChanged([CallerMemberName]string propertyName = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
+    
+    #endregion
 }
 

@@ -7,6 +7,7 @@ using System.Threading;
 using MaterialDesignThemes.Wpf;
 using TTools.ViewModels;
 
+
 namespace TTools.Views
 {
     /// <summary>
@@ -21,10 +22,6 @@ namespace TTools.Views
             //ViewModelインスタンスをデータコンテクストに投入
             this.DataContext = new MainWindowVM();
 
-            //トースト通知を非同期表示
-            Task.Factory.StartNew(() => { Thread.Sleep(2500); })
-                .ContinueWith(t => { MainSnackbar.MessageQueue.Enqueue("更新情報はありません。"); }
-                , TaskScheduler.FromCurrentSynchronizationContext());
         }
 
         private void UIElement_OnPreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)

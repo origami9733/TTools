@@ -136,6 +136,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Domain\AnotherCommandImplementation.cs" />
+    <Compile Include="Domain\DispatchObservableCollection.cs" />
     <Compile Include="Models\OrderItem.cs" />
     <Compile Include="Models\ProductItem.cs" />
     <Compile Include="EF\TechnoDB.cs" />
