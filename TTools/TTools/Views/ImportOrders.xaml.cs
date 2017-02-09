@@ -24,5 +24,10 @@ namespace TTools.Views
         {
             InitializeComponent();
         }
+
+        private void CheckBox_Click(object sender, RoutedEventArgs e)
+        {
+            DG1.CancelEdit();
+        }
     }
 }
