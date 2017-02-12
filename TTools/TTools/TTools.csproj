@@ -141,11 +141,15 @@
     <Compile Include="Models\ProductItem.cs" />
     <Compile Include="EF\TechnoDB.cs" />
     <Compile Include="Document\JyuchuViewModel - コピー.cs" />
+    <Compile Include="ViewModels\BsOrderManagementVM.cs" />
     <Compile Include="ViewModels\ImportOrdersVM.cs" />
     <Compile Include="ViewModels\MainWindowVM.cs" />
     <Compile Include="Domain\RelayCommand.cs" />
     <Compile Include="Views\Dialogs\LoadingTimeMessageDialog.xaml.cs">
       <DependentUpon>LoadingTimeMessageDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\OrdersManagement.xaml.cs">
+      <DependentUpon>OrdersManagement.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Information.xaml.cs">
       <DependentUpon>Information.xaml</DependentUpon>
@@ -160,6 +164,10 @@
     <Page Include="Views\Dialogs\DefaultMessageDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\OrdersManagement.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

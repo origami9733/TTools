@@ -15,12 +15,9 @@ using System.Windows.Shapes;
 
 namespace TTools.Views
 {
-    /// <summary>
-    /// Jyuchu.xaml の相互作用ロジック
-    /// </summary>
-    public partial class ImportOrders: UserControl
+    public partial class OrdersManagement : UserControl
     {
-        public ImportOrders()
+        public OrdersManagement()
         {
             InitializeComponent();
         }

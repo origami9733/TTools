@@ -39,7 +39,7 @@ namespace TTools.Views
         //画面右上のポップアップメニューのボタン押下イベント
         private async void MenuPopupButton_OnClick_Async(object sender, RoutedEventArgs e)
         {
-            var sampleMessageDialog = new LoadingMessageDialog
+            var sampleMessageDialog = new DefaultMessageDialog
             {
                 Message = { Text = ((ButtonBase)sender).Content.ToString() }
             };

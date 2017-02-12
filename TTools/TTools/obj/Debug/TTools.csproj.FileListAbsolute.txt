@@ -150,3 +150,5 @@ C:\Users\tmiy0435\Source\Repos\TTools\TTools\TTools\obj\Debug\TTools.Properties.
 C:\Users\tmiy0435\Source\Repos\TTools\TTools\TTools\obj\Debug\TTools.csproj.GenerateResource.Cache
 C:\Users\tmiy0435\Source\Repos\TTools\TTools\TTools\obj\Debug\TTools.exe
 C:\Users\tmiy0435\Source\Repos\TTools\TTools\TTools\obj\Debug\TTools.pdb
+C:\Users\tmiy0435\Source\Repos\TTools\TTools\TTools\obj\Debug\Views\OrdersManagement.g.cs
+C:\Users\tmiy0435\Source\Repos\TTools\TTools\TTools\obj\Debug\Views\OrdersManagement.baml

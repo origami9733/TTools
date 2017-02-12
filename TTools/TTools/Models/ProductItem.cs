@@ -22,23 +22,18 @@ namespace TTools.Models
             get { return _productId; }
             set
             {
-                if (_productId != value)
-                {
-                    _productId = value;
-                }
+                if (_productId == value) return;
+                _productId = value;
                 RaisePropertyChanged();
             }
         }
         public string LongName
         {
-            get
-            { return _longName; }
+            get { return _longName; }
             set
             {
-                if (_longName != value)
-                {
-                    _longName = value;
-                }
+                if (_longName == value) return;
+                _longName = value;
                 RaisePropertyChanged();
             }
         }
@@ -47,10 +42,8 @@ namespace TTools.Models
             get { return _shortName; }
             set
             {
-                if (_shortName != value)
-                {
-                    _shortName = value;
-                }
+                if (_shortName == value) return;
+                _shortName = value;
                 RaisePropertyChanged();
             }
         }
@@ -59,10 +52,8 @@ namespace TTools.Models
             get { return _aliasName; }
             set
             {
-                if (_aliasName != value)
-                {
-                    _aliasName = value;
-                }
+                if (_aliasName == value) return;
+                _aliasName = value;
                 RaisePropertyChanged();
             }
         }
@@ -71,10 +62,8 @@ namespace TTools.Models
             get { return _price; }
             set
             {
-                if (_price != value)
-                {
-                    _price = value;
-                }
+                if (_price == value) return;
+                _price = value;
                 RaisePropertyChanged();
             }
         }
@@ -83,10 +72,8 @@ namespace TTools.Models
             get { return _category; }
             set
             {
-                if (_category != value)
-                {
-                    _category = value;
-                }
+                if (_category == value) return;
+                _category = value;
                 RaisePropertyChanged();
             }
         }

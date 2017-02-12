@@ -18,19 +18,18 @@ using TTools.Views;
 using TTools.Domain;
 using Reactive.Bindings;
 using System.Reactive.Linq;
+using System.Windows.Controls;
 
 namespace TTools.ViewModels
 {
     public class ImportOrdersVM : INotifyPropertyChanged, INotifyDataErrorInfo
     {
         #region プロパティの変更通知
-
         public event PropertyChangedEventHandler PropertyChanged;
         public void RaisePropertyChanged([CallerMemberName]string propertyName = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-
         #endregion
 
         #region エラー管理
@@ -84,50 +83,42 @@ namespace TTools.ViewModels
             switch (propertyName)
             {
                 case nameof(UpdateDate):
-                    if (String.IsNullOrEmpty(SendedFlag) == false && this.UpdateDate == null)
-                        AddError(nameof(UpdateDate), "何日以降の情報を取得するか指定して下さい。");
-                    else
-                        RemoveError(nameof(UpdateDate), null);
+                    if (SelectedSendedFlag== receivedOrder && this.UpdateDate == null)
+                        AddError(nameof(UpdateDate), @"日付を指定して下さい。");
+                    else RemoveError(nameof(UpdateDate), null);
                     break;
                 default:
                     break;
             }
         }
-
         #endregion
 
         #region コンストラクタ
         public ImportOrdersVM()
         {
             Init();
+
+            SendedFlagList = new List<string>();
+            SendedFlagList.Add(noReceivedOrder);
+            SendedFlagList.Add(receivedOrder);
+            SelectedSendedFlag = noReceivedOrder;
         }
         #endregion
 
         #region プロパティ
-
         //検索条件を保持するプロパティ
-        private string _sendedFlag = string.Empty;
         private DateTime? _updateDate = null;
-        public string SendedFlag
-        {
-            get { return _sendedFlag; }
-            set
-            {
-                if (_sendedFlag != value) _sendedFlag = value;
-                ValidateProperty(nameof(UpdateDate), value);
-            }
-        }
         public DateTime? UpdateDate
         {
             get { return _updateDate; }
             set
             {
-                if (_updateDate != value) _updateDate = value;
+                if (_updateDate == value) return;
+                _updateDate = value;
                 ValidateProperty(nameof(UpdateDate), value);
+                RaisePropertyChanged();
             }
         }
-
-
         //選択中の情報を保持するプロパティ
         private string _selectedCategory;
         private Object _selectedRowItem;
@@ -155,12 +146,10 @@ namespace TTools.ViewModels
                 }
             }
         }
-
-
         //コレクションを保持するプロパティ
-        private DispatchObservableCollection<OrderItem> _originalOrderItems;
-        private DispatchObservableCollection<DisplayOrderItem> _displayOrderItems;
-        public DispatchObservableCollection<OrderItem> OriginalOrderItems
+        private DispatcheObservableCollection<OrderItem> _originalOrderItems;
+        private DispatcheObservableCollection<DisplayImportOrderItem> _displayOrderItems;
+        public DispatcheObservableCollection<OrderItem> OriginalOrderItems
         {
             get { return _originalOrderItems; }
             set
@@ -172,7 +161,7 @@ namespace TTools.ViewModels
                 }
             }
         }
-        public DispatchObservableCollection<DisplayOrderItem> DisplayOrderItems
+        public DispatcheObservableCollection<DisplayImportOrderItem> DisplayOrderItems
         {
             get { return _displayOrderItems; }
             set
@@ -184,8 +173,6 @@ namespace TTools.ViewModels
                 }
             }
         }
-
-
         //受注数のカウントを保持するプロパティ
         private int? _allCategoryCount;
         private int? _machineCategoryCount;
@@ -239,13 +226,11 @@ namespace TTools.ViewModels
                 }
             }
         }
-
-
         //カテゴリーの選択状態を保持するプロパティ
         private bool _allCategoryIsChecked;
         private bool _machineCategoryIsChecked;
-        private bool _bsCategoryIsCheked;
-        private bool _plCategoryIsCheked;
+        private bool _bsCategoryIsChecked;
+        private bool _plCategoryIsChecked;
         public bool AllCategoryIsChecked
         {
             get { return _allCategoryIsChecked; }
@@ -266,42 +251,36 @@ namespace TTools.ViewModels
                 RaisePropertyChanged();
             }
         }
-        public bool BsCategoryIsCheked
+        public bool BsCategoryIsChecked
         {
-            get { return _bsCategoryIsCheked; }
+            get { return _bsCategoryIsChecked; }
             set
             {
-                if (_bsCategoryIsCheked == value) return;
-                _bsCategoryIsCheked = value;
+                if (_bsCategoryIsChecked == value) return;
+                _bsCategoryIsChecked = value;
                 RaisePropertyChanged();
             }
         }
-        public bool PlCategoryIsCheked
+        public bool PlCategoryIsChecked
         {
-            get { return _plCategoryIsCheked; }
+            get { return _plCategoryIsChecked; }
             set
             {
-                if (_plCategoryIsCheked == value) return;
-                _plCategoryIsCheked = value;
+                if (_plCategoryIsChecked == value) return;
+                _plCategoryIsChecked = value;
                 RaisePropertyChanged();
             }
         }
-
-
         //チェックボックスヘッダーの状態を保持するプロパティ
         public bool CheckBoxColumnHeaderIsChecked
         {
             get { return DisplayOrderItems?.Count(x => x.IsChecked == true) > 0; }
         }
-
-
         //チェック時に表示するメッセージを保持するプロパティ
         public string IsCheckedMessage
         {
             get { return DisplayOrderItems?.Count(x => x.IsChecked == true).ToString(); }
         }
-
-
         //スナックバー関連
         private bool _isSnackbarActive;
         private SnackbarMessageQueue _messageQueue;
@@ -329,8 +308,6 @@ namespace TTools.ViewModels
                 }
             }
         }
-
-
         //ダイアログ関連
         private bool _isDialogOpen;
         private object _dialogContent;
@@ -354,24 +331,35 @@ namespace TTools.ViewModels
                 RaisePropertyChanged();
             }
         }
-
+        //伝送フラグ関連
+        public IList<string> SendedFlagList { get; set; }
+        private string _selectedSendedFlag;
+        public string SelectedSendedFlag
+        {
+            get { return _selectedSendedFlag; }
+            set
+            {
+                if (_selectedSendedFlag == value) return;
+                _selectedSendedFlag = value;
+                ValidateProperty(nameof(UpdateDate), value);
+                RaisePropertyChanged();
+            }
+        }
         #endregion
 
         #region 変数
-
         private TechnoDB context;
         private OrderItem orderItem = new OrderItem();
         private ICollectionView collectionView;
-
+        private const string noReceivedOrder= "No Recieved";
+        private const string receivedOrder = "Recieved";
         #endregion
 
         #region コマンド
-
         private ICommand _reloadCommand;
         private ICommand _changeCategoryCommand;
         private ICommand _checkAllCommand;
         private ICommand _importCheckedItemsCommand;
-
         //データのリロードコマンド
         public ICommand ReloadCommand
         {
@@ -393,8 +381,6 @@ namespace TTools.ViewModels
             if (_currentErrors.ContainsKey(nameof(UpdateDate)) == true) return false;
             return true;
         }
-
-
         //カテゴリーの切り替えコマンド
         public ICommand ChangeCategoryCommand
         {
@@ -415,8 +401,6 @@ namespace TTools.ViewModels
         {
             return DisplayOrderItems != null;
         }
-
-
         //チェックボックスヘッダーの操作コマンド
         public ICommand CheckAllCommand
         {
@@ -433,19 +417,17 @@ namespace TTools.ViewModels
         {
             if (arg.ToString() == "True")
             {
-                foreach (DisplayOrderItem a in collectionView) a.IsChecked = true;
+                foreach (DisplayImportOrderItem a in collectionView) a.IsChecked = true;
             }
             else
             {
-                foreach (DisplayOrderItem a in DisplayOrderItems) a.IsChecked = false;
+                foreach (DisplayImportOrderItem a in DisplayOrderItems) a.IsChecked = false;
             }
         }
         private bool CanExecuteCheckAllCommand(object arg)
         {
             return DisplayOrderItems != null;
         }
-
-
         //インポートを実行するコマンド
         public ICommand ImportCheckedItemsCommand
         {
@@ -469,7 +451,6 @@ namespace TTools.ViewModels
         #endregion
 
         #region メソッド
-
         private void Init()
         {
             UnSelectCategory();
@@ -481,7 +462,43 @@ namespace TTools.ViewModels
             DisplayOrderItems = null;
             OriginalOrderItems = null;
         } //全て初期化する。
+        private async void DataLoad()
+        {
+            //非同期で読み込みメソッドをスタート
+            await Task.Factory.StartNew(() =>
+            {
+                this.OriginalOrderItems = new DispatcheObservableCollection<OrderItem>();
+                this.OriginalOrderItems = this.orderItem.Load(MakeSQL());
+            })
+                .ContinueWith((Action<Task, object>)((t, _) =>
+                {
+                    this.DisplayOrderItems = new DispatcheObservableCollection<DisplayImportOrderItem>();
 
+                    //要素アイテムのイベント処理
+                    foreach (var x in this.OriginalOrderItems)
+                    {
+                        DisplayImportOrderItem item = new DisplayImportOrderItem();
+
+                        Observable.FromEventPattern<PropertyChangedEventHandler, PropertyChangedEventArgs>(
+                                h => item.PropertyChanged += h,
+                                h => item.PropertyChanged -= h)
+                                .Subscribe((System.Reactive.EventPattern<PropertyChangedEventArgs> e) =>
+                                {
+                                    // アイテムに変更があったら下記を実行する。
+                                    RaisePropertyChanged("CheckBoxColumnHeaderIsChecked");
+                                    RaisePropertyChanged("IsCheckedMessage");
+                                });
+
+                        item.IsChecked = false;
+                        item.OrderItem = x;
+                        this.DisplayOrderItems.Add(item);
+                    }
+                    IsDialogOpen = false;
+                }), null, TaskScheduler.FromCurrentSynchronizationContext());
+
+            this.ReloadCounters();
+            this.collectionView = CollectionViewSource.GetDefaultView(this.DisplayOrderItems) as ListCollectionView;
+        }
         private void ReloadAll()
         {
             this.IsDialogOpen = true;
@@ -495,53 +512,26 @@ namespace TTools.ViewModels
             this.MessageQueue = new SnackbarMessageQueue();
             string snackbarMessage;
 
-            if (AllCategoryCount == 0) snackbarMessage = "新しいデータは見つかりませんでした。";
-            else snackbarMessage = "データの取得に成功しました。";
+            if (AllCategoryCount == 0 || AllCategoryCount == null) snackbarMessage = "受注データが見つかりませんでした。";
+            else snackbarMessage = AllCategoryCount.ToString() + "件のデータが見つかりました。";
 
-            this.MessageQueue.Enqueue(snackbarMessage, "OK", () => IsSnackbarActive = false);
-
+            this.MessageQueue.Enqueue(snackbarMessage, "確認", () => IsSnackbarActive = false);
             this.AllCategoryIsChecked = true;
-        } //データをリロードする。
-        private async void DataLoad()
-        {
-            //非同期で読み込みメソッドをスタート
-            await Task.Factory.StartNew(() =>
-            {
-                this.OriginalOrderItems = new DispatchObservableCollection<OrderItem>();
-                this.OriginalOrderItems = this.orderItem.Load(MakeSQL());
-            })
-                .ContinueWith((t, _) =>
-                {
-                    this.DisplayOrderItems = new DispatchObservableCollection<DisplayOrderItem>();
-
-                    //要素アイテムのイベント処理
-                    foreach (var x in this.OriginalOrderItems)
-                    {
-                        DisplayOrderItem item = new DisplayOrderItem();
-
-                        Observable.FromEventPattern<PropertyChangedEventHandler, PropertyChangedEventArgs>(
-                                h => item.PropertyChanged += h,
-                                h => item.PropertyChanged -= h)
-                                .Subscribe(e =>
-                                {
-                                    // アイテムに変更があったら下記を実行する。
-                                    RaisePropertyChanged("CheckBoxColumnHeaderIsChecked");
-                                    RaisePropertyChanged("IsCheckedMessage");
-                                });
-
-                        item.IsChecked = false;
-                        item.OrderItem = x;
-                        this.DisplayOrderItems.Add(item);
-                    }
-                    IsDialogOpen = false;
-                }, null, TaskScheduler.FromCurrentSynchronizationContext());
-
-            this.ReloadCounters();
-            this.collectionView = CollectionViewSource.GetDefaultView(this.DisplayOrderItems) as ListCollectionView;
-        }
-
+        } //データをリロードする。     
         private async void ImportCheckedItems()
         {
+
+            var sampleMessageDialog = new DefaultMessageDialog
+            {
+                Message = { Text = "選択中の" + IsCheckedMessage + "件のアイテムを取り込みます。" },
+            };
+            await DialogHost.Show(sampleMessageDialog, "RootDialog");
+
+            if (sampleMessageDialog.Accept == false)
+            {
+                return;
+            }
+
             this.IsDialogOpen = true;
             this.DialogContent = new LoadingTimeMessageDialog();
             int successCount = 0;
@@ -554,7 +544,7 @@ namespace TTools.ViewModels
                     {
                         if (this.context.OrderItems.Count(x => x.伝票ＮＯ == item.OrderItem.伝票ＮＯ) > 0)
                         {
-                            MessageBox.Show("debug:キーが重複しています。");
+                            MessageBox.Show("exeption message : contain key include ");
                         }
                         else
                         {
@@ -562,7 +552,15 @@ namespace TTools.ViewModels
                             successCount++;
                         }
                     }
-                    this.context.SaveChanges();
+
+                    try
+                    {
+                        this.context.SaveChanges();
+                    }
+                    catch
+                    {
+                        return;
+                    }
                 }
             })
             .ContinueWith((t, _) =>
@@ -577,7 +575,7 @@ namespace TTools.ViewModels
 
             snackbarMessage = successCount.ToString() + "件のデータを取り込みに成功しました。";
 
-            this.MessageQueue.Enqueue(snackbarMessage, "OK", () => IsSnackbarActive = false);
+            this.MessageQueue.Enqueue(snackbarMessage, "確認", () => IsSnackbarActive = false);
             this.AllCategoryIsChecked = true;
         }
 
@@ -613,30 +611,30 @@ namespace TTools.ViewModels
                 switch (arg)
                 {
                     case "ShowAll":
-                        foreach (DisplayOrderItem a in DisplayOrderItems) a.IsChecked = false;
+                        foreach (DisplayImportOrderItem a in DisplayOrderItems) a.IsChecked = false;
                         collectionView.Filter = null;
                         break;
                     case "Machine":
-                        foreach (DisplayOrderItem a in DisplayOrderItems) a.IsChecked = false;
+                        foreach (DisplayImportOrderItem a in DisplayOrderItems) a.IsChecked = false;
                         collectionView.Filter += x =>
                         {
-                            var item = (DisplayOrderItem)x;
+                            var item = (DisplayImportOrderItem)x;
                             return item.OrderItem.フラグ１ == " ";
                         };
                         break;
                     case "BS":
-                        foreach (DisplayOrderItem a in DisplayOrderItems) a.IsChecked = false;
+                        foreach (DisplayImportOrderItem a in DisplayOrderItems) a.IsChecked = false;
                         collectionView.Filter += x =>
                         {
-                            var item = (DisplayOrderItem)x;
+                            var item = (DisplayImportOrderItem)x;
                             return item.OrderItem.フラグ１ == "0";
                         };
                         break;
                     case "PL":
-                        foreach (DisplayOrderItem a in DisplayOrderItems) a.IsChecked = false;
+                        foreach (DisplayImportOrderItem a in DisplayOrderItems) a.IsChecked = false;
                         collectionView.Filter = x =>
                         {
-                            var item = (DisplayOrderItem)x;
+                            var item = (DisplayImportOrderItem)x;
                             return item.OrderItem.フラグ１ == "1";
                         };
                         break;
@@ -647,18 +645,26 @@ namespace TTools.ViewModels
         {
             AllCategoryIsChecked = false;
             MachineCategoryIsChecked = false;
-            BsCategoryIsCheked = false;
-            PlCategoryIsCheked = false;
+            BsCategoryIsChecked = false;
+            PlCategoryIsChecked = false;
         } //カテゴリーの選択状態を解除する。
 
         private string MakeSQL()
         {
             string sql = "SELECT * FROM dbo.GH_0000101 WHERE 伝送フラグ = ";
 
-            if (SendedFlag == "")
-                sql = sql + "0" + " ";
+            if (string.IsNullOrEmpty(SelectedSendedFlag))
+                sql = sql + "0 ";
             else
-                sql = string.Format(sql + "{0} ", SendedFlag);
+                switch (SelectedSendedFlag)
+                {
+                    case noReceivedOrder:
+                        sql = sql + "0 ";
+                        break;
+                    case receivedOrder:
+                        sql = sql + "1 ";
+                        break;
+                }
 
             if (UpdateDate != null)
                 sql = string.Format(sql + "AND 更新日付 >= '{0}'", UpdateDate.Value.ToString("yyyy/MM/dd"));
@@ -667,12 +673,11 @@ namespace TTools.ViewModels
 
             return sql;
         } //受注データ取得用のSQL文を作成する。
-
         #endregion
     }
 
     //VM用エンティティクラス
-    public class DisplayOrderItem : INotifyPropertyChanged
+    public class DisplayImportOrderItem : INotifyPropertyChanged
     {
         private bool _isChecked;
         private OrderItem _orderItem;
@@ -704,4 +709,3 @@ namespace TTools.ViewModels
         }
     }
 }
-

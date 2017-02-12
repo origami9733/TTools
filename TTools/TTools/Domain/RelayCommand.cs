@@ -2,7 +2,7 @@
 using System.Windows.Input;
 using TTools.Models;
 
-namespace TTools.Views
+namespace TTools.Domain
 {
     public class RelayCommand<T> : ICommand
     {

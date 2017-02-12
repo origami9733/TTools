@@ -18,11 +18,23 @@ namespace TTools.Views
     /// <summary>
     /// MessageDialog.xaml の相互作用ロジック
     /// </summary>
-    public partial class LoadingMessageDialog : UserControl
+    public partial class DefaultMessageDialog : UserControl
     {
-        public LoadingMessageDialog()
+        public DefaultMessageDialog()
         {
             InitializeComponent();
+        }
+
+        public bool Accept { get; set; }
+
+        private void AcceptBT_Click(object sender, RoutedEventArgs e)
+        {
+            Accept = true;
+        }
+
+        private void CancelBT_Click(object sender, RoutedEventArgs e)
+        {
+            Accept = false;
         }
     }
 }

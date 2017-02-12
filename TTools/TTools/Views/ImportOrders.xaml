@@ -4,9 +4,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:TTools.Views"
+             xmlns:domain="clr-namespace:TTools.Domain"
              xmlns:m="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d" 
-             d:DesignHeight="800" d:DesignWidth="1200">
+             d:DesignHeight="515" d:DesignWidth="1163">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -20,133 +21,181 @@
     </UserControl.Resources>
 
 
-    <m:DialogHost IsOpen="{Binding IsDialogOpen}" DialogContent="{Binding DialogContent}"
-                  CloseOnClickAway="False" >
-
-        <DockPanel>
-            <Grid Margin="25 10 25 0 ">
-                <DataGrid Name="DG1" DockPanel.Dock="Left" HorizontalAlignment="Left"
-                      ItemsSource="{Binding Path=DisplayOrderItems , UpdateSourceTrigger=PropertyChanged }"
-                      SelectedItem="{Binding SelectedRowItem}" AutoGenerateColumns="False"
-                      CanUserSortColumns="True" CanUserAddRows="False" EnableRowVirtualization="True"
-                      m:DataGridAssist.CellPadding="13 8 8 8" 
-                      m:DataGridAssist.ColumnHeaderPadding="8">
+    <m:DialogHost IsOpen="{Binding IsDialogOpen}" DialogContent="{Binding DialogContent}" CloseOnClickAway="False" >
+        <Grid>
+            <Grid Margin="18 13 23 23">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="AUTO"/>
+                </Grid.ColumnDefinitions>
+                <!--#region データグリッド-->
+                <DataGrid Grid.Column="0" x:Name="DG1"
+                          HorizontalAlignment="Left" VerticalAlignment="Top"
+                          ItemsSource="{Binding Path=DisplayOrderItems,UpdateSourceTrigger=PropertyChanged}"
+                          SelectedItem="{Binding SelectedRowItem}"
+                          AutoGenerateColumns="False" EnableRowVirtualization="True"
+                          CanUserSortColumns="True" CanUserAddRows="False"
+                          m:DataGridAssist.CellPadding="13 8 8 8"
+                          m:DataGridAssist.ColumnHeaderPadding="8"
+                          VerticalContentAlignment="Center">
                     <DataGrid.Columns>
-                        <DataGridCheckBoxColumn Binding="{Binding IsChecked, UpdateSourceTrigger=PropertyChanged}"
+                        <DataGridCheckBoxColumn Binding="{Binding IsChecked,UpdateSourceTrigger=PropertyChanged}"
                                                 ElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnStyle}"
-                                                EditingElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnEditingStyle}"
-                                                >
+                                                EditingElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnEditingStyle}">
                             <DataGridCheckBoxColumn.Header>
-                                <!--<Border Background="Transparent" Padding="6 0 6 0" HorizontalAlignment="Center">-->
                                 <CheckBox HorizontalAlignment="Center" VerticalAlignment="Center"
-                                          Click="CheckBox_Click"
                                           DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}, Path=DataContext}"
-                                          IsChecked="{Binding CheckBoxColumnHeaderIsChecked, UpdateSourceTrigger=PropertyChanged,Mode=OneWay}" 
+                                          IsChecked="{Binding CheckBoxColumnHeaderIsChecked,UpdateSourceTrigger=PropertyChanged,Mode=OneWay}" 
+                                          Click="CheckBox_Click"
                                           Command= "{Binding CheckAllCommand}"
-                                          CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=IsChecked}">
+                                          CommandParameter="{Binding RelativeSource={RelativeSource Self},Path=IsChecked}">
                                 </CheckBox>
-                                <!--</Border>-->
                             </DataGridCheckBoxColumn.Header>
                         </DataGridCheckBoxColumn>
-
-                        <m:MaterialDataGridTextColumn Header="契約番号" MaxLength="1000" 
-                                                      Binding="{Binding OrderItem.契約番号}"
+                        <m:MaterialDataGridTextColumn Header="契約番号" Binding="{Binding OrderItem.契約番号}"
+                                                      MaxLength="1000" FontSize="17"
                                                       EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}"  />
-                        <m:MaterialDataGridTextColumn Header="伝票No" MaxLength="1000"
-                                                      Binding="{Binding OrderItem.伝票ＮＯ}"                                                      
+                        <m:MaterialDataGridTextColumn Header="伝票No" Binding="{Binding OrderItem.伝票ＮＯ}"
+                                                      MaxLength="1000"
                                                       EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" />
-                        <m:MaterialDataGridTextColumn Header="商品コード" MaxLength="1000" 
-                                                      Binding="{Binding OrderItem.商品コード}"
+                        <m:MaterialDataGridTextColumn Header="商品コード" Binding="{Binding OrderItem.商品コード}"
+                                                      MaxLength="1000" FontSize="17"
                                                       EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" />
-                        <m:MaterialDataGridTextColumn Header="商品名" MaxLength="1000"
-                                                      Binding="{Binding OrderItem.商品名}"
+                        <m:MaterialDataGridTextColumn Header="商品名" Binding="{Binding OrderItem.商品名}"
+                                                      MaxLength="1000"
                                                       EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}"  />
                     </DataGrid.Columns>
                 </DataGrid>
-
-                <StackPanel DockPanel.Dock="Right" Width="150" HorizontalAlignment="Right" Orientation="Vertical">
-                    <!--Reload-->
-                    <Button Name="ReloadBT" Content="Reload" Margin="0 10 0 10" Command="{Binding ReloadCommand,UpdateSourceTrigger=PropertyChanged}"/>
-                    <!--Import-->
-                    <Button Name="ImportBT" Content="Import" Margin="0 10 0 10" Command="{Binding ImportCheckedItemsCommand}"/>
-                    <!--伝送フラグ-->
-
-                    <StackPanel Orientation="Horizontal">
-                        <m:PackIcon Kind="FlagOutline" />
-                        <TextBlock Text="{Binding IsCheckedMessage}" FontSize="20" />
+                <!--#endregion-->
+                <Grid Grid.Column="1" Margin="10 15 0 0" HorizontalAlignment="Right">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="AUTO"/>
+                    </Grid.RowDefinitions>
+                    <StackPanel Grid.Row="0" Margin="0 0 0 0" Width="150" 
+                                HorizontalAlignment="Right" VerticalAlignment="Top"
+                                Orientation="Vertical">
+                        <!--#region 旗アイコン-->
+                        <StackPanel Orientation="Horizontal">
+                            <m:PackIcon Kind="FlagOutline"
+                                        Width="20" Height="20"
+                                        HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                            <TextBlock FontSize="20" Text="{Binding IsCheckedMessage}"
+                                       Margin="2.5 0 0 0"
+                                       HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
+                        </StackPanel>
+                        <!--#endregion-->
+                        <!--#region データ取得条件-->
+                        <StackPanel Margin="0 25 0 0" Orientation="Vertical">
+                            <ComboBox VerticalAlignment="Bottom" FontSize="14"
+                                      ItemsSource="{Binding SendedFlagList,UpdateSourceTrigger=PropertyChanged}"
+                                      SelectedValue="{Binding SelectedSendedFlag,UpdateSourceTrigger=PropertyChanged}"
+                                      Style="{StaticResource MaterialDesignFloatingHintComboBox}">
+                                <ComboBox.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <VirtualizingStackPanel />
+                                    </ItemsPanelTemplate>
+                                </ComboBox.ItemsPanel>
+                                <m:HintAssist.Hint>
+                                    <StackPanel Orientation="Horizontal" Margin="0 0 0 0">
+                                        <TextBlock FontSize="17">Target</TextBlock>
+                                    </StackPanel>
+                                </m:HintAssist.Hint>
+                            </ComboBox>
+                            <DatePicker Margin="0 25 0 0" Language="ja-JP" FontSize="14"
+                                        SelectedDate="{Binding UpdateDate,UpdateSourceTrigger=PropertyChanged,ValidatesOnNotifyDataErrors=True,ValidatesOnExceptions=True}"
+                                        Style="{StaticResource MaterialDesignFloatingHintDatePicker}">
+                                <m:HintAssist.Hint>
+                                    <StackPanel Orientation="Horizontal" Margin="0 0 0 0">
+                                        <TextBlock FontSize="17">UpdateDate</TextBlock>
+                                    </StackPanel>
+                                </m:HintAssist.Hint>
+                            </DatePicker>
+                        </StackPanel>
+                        <!--#endregion-->
+                        <!--#region ボタン-->
+                        <StackPanel Grid.Row="0" Margin="0 45 0 0" Orientation="Vertical">
+                            <Button Content="Reload" Margin="0 0 0 0"
+                                    Command="{Binding ReloadCommand,UpdateSourceTrigger=PropertyChanged}"/>
+                            <Button Content="Import" Margin="0 15 0 0" 
+                                    Command="{Binding ImportCheckedItemsCommand}"/>
+                        </StackPanel>
+                        <!--#endregion-->
                     </StackPanel>
-                    <TextBox Margin="0 16 0 0"
-                         Text="{Binding SendedFlag,UpdateSourceTrigger=PropertyChanged}" 
-                         Style="{StaticResource MaterialDesignFloatingHintTextBox}" >
-                        <m:HintAssist.Hint>
-                            <StackPanel   Margin="-2 0 0 0" Orientation="Horizontal">
-                                <TextBlock Text="伝送フラグ"/>
-                            </StackPanel>
-                        </m:HintAssist.Hint>
-                    </TextBox>
-
-
-                    <DatePicker Margin="0 16 0 0"
-                            SelectedDate="{Binding UpdateDate,UpdateSourceTrigger=PropertyChanged,ValidatesOnNotifyDataErrors=True}"
-                            Language="ja-JP" m:HintAssist.Hint="更新日付"
-                            Style="{StaticResource MaterialDesignFloatingHintDatePicker}"/>
-
-                    <!--カテゴリー-->
-                    <GroupBox Margin="0 16 0 0" Grid.Column="0" Header="表示カテゴリー">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="25"/>
-                                <RowDefinition Height="25"/>
-                                <RowDefinition Height="25"/>
-                                <RowDefinition Height="25"/>
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="2*"/>
-                                <ColumnDefinition Width="1*"/>
-                                <ColumnDefinition Width="1*"/>
-                            </Grid.ColumnDefinitions>
-                            
-
-                            <RadioButton Grid.Row="0" Grid.Column="0" Name="ShowAll" Content="全て"
-                                         VerticalAlignment="Center" HorizontalAlignment="Left"
-                                         IsChecked="{Binding AllCategoryIsChecked}"
-                                         Command="{Binding ChangeCategoryCommand}" CommandParameter="ShowAll"/>
-                            <RadioButton Grid.Row="1" Grid.Column="0" Name="ShowMachine" Content="製品"
-                                         VerticalAlignment="Center" HorizontalAlignment="Left"
-                                         IsChecked="{Binding MachineCategoryIsChecked}"
-                                         Command="{Binding ChangeCategoryCommand}" CommandParameter="Machine"/>
-                            <RadioButton Grid.Row="2" Grid.Column="0" Name="ShowBS" Content="BS"
-                                         VerticalAlignment="Center" HorizontalAlignment="Left"
-                                         IsChecked="{Binding BsCategoryIsChecked}"
-                                         Command="{Binding ChangeCategoryCommand}" CommandParameter="BS"/>
-                            <RadioButton Grid.Row="3" Grid.Column="0" Name="ShowPL" Content="PL"
-                                         VerticalAlignment="Center" HorizontalAlignment="Left"
-                                         IsChecked="{Binding PlCategoryIsChecked}"
-                                         Command="{Binding ChangeCategoryCommand}" CommandParameter="PL"/>
-
-
-                            <TextBlock Grid.Row="0" Grid.Column="2" HorizontalAlignment="Right"
-                                   FontStretch="SemiCondensed" VerticalAlignment="Center"
-                                   Text="{Binding AllCategoryCount}"/>
-                            <TextBlock Grid.Row="1" Grid.Column="2" HorizontalAlignment="Right"
-                                   FontStretch="SemiCondensed" VerticalAlignment="Center"
-                                   Text="{Binding MachineCategoryCount}"/>
-                            <TextBlock Grid.Row="2" Grid.Column="2" HorizontalAlignment="Right"
-                                   FontStretch="SemiCondensed" VerticalAlignment="Center"
-                                   Text="{Binding BsCategoryCount}"/>
-                            <TextBlock Grid.Row="3" Grid.Column="2" HorizontalAlignment="Right"
-                                   FontStretch="SemiCondensed" VerticalAlignment="Center"
-                                   Text="{Binding PlCategoryCount}"/>
-
-                        </Grid>
+                    <!--#region カテゴリー操作-->
+                    <GroupBox Grid.Row="1" Margin="0 0 0 0" Header="Show Category" >
+                        <StackPanel Grid.Column="0" Margin="3 0 0 0" Orientation="Vertical">
+                            <Grid Height="27">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="35"/>
+                                </Grid.ColumnDefinitions>
+                                <RadioButton Name="ShowAll" Content="ALL" GroupName="CategoryGroup"
+                                                 HorizontalAlignment="Left" FontSize="14"
+                                                 VerticalContentAlignment="Center"                                                 
+                                                 IsChecked="{Binding AllCategoryIsChecked}"
+                                                 Command="{Binding ChangeCategoryCommand}" CommandParameter="ShowAll"/>
+                                <Label Grid.Column="1"
+                                           HorizontalAlignment="Right" VerticalAlignment="Center"
+                                           VerticalContentAlignment="Center"
+                                           FontSize="13" Content="{Binding AllCategoryCount}"/>
+                            </Grid>
+                            <Grid Height="27">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="35"/>
+                                </Grid.ColumnDefinitions>
+                                <RadioButton Name="ShowMachine" Content="Machine" GroupName="CategoryGroup"
+                                                 HorizontalAlignment="Left" FontSize="14"
+                                                 VerticalContentAlignment="Center"
+                                                 IsChecked="{Binding MachineCategoryIsChecked}"
+                                                 Command="{Binding ChangeCategoryCommand}" CommandParameter="Machine"/>
+                                <Label Grid.Column="1"
+                                           HorizontalAlignment="Right" VerticalAlignment="Center"
+                                           VerticalContentAlignment="Center"    
+                                           FontSize="13" Content="{Binding MachineCategoryCount}"/>
+                            </Grid>
+                            <Grid Height="27">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="35"/>
+                                </Grid.ColumnDefinitions>
+                                <RadioButton Name="ShowBS" Content="BS" Height="25" GroupName="CategoryGroup"
+                                                 HorizontalAlignment="Left" FontSize="14"
+                                                 VerticalContentAlignment="Center"
+                                                 IsChecked="{Binding BsCategoryIsChecked}"
+                                                 Command="{Binding ChangeCategoryCommand}" CommandParameter="BS"/>
+                                <Label Grid.Column="1" Height="25"
+                                           HorizontalAlignment="Right"
+                                           VerticalContentAlignment="Center"
+                                           FontSize="13" Content="{Binding BsCategoryCount}"/>
+                            </Grid>
+                            <Grid Height="27">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="35"/>
+                                </Grid.ColumnDefinitions>
+                                <RadioButton Name="ShowPL" Content="PL"  GroupName="CategoryGroup"
+                                                 HorizontalAlignment="Left" FontSize="14"
+                                                 VerticalContentAlignment="Center"
+                                                 IsChecked="{Binding PlCategoryIsChecked}"
+                                                 Command="{Binding ChangeCategoryCommand}" CommandParameter="PL"/>
+                                <Label Grid.Column="1"
+                                           HorizontalAlignment="Right"
+                                           VerticalContentAlignment="Center"    
+                                           FontSize="13" Content="{Binding PlCategoryCount}"/>
+                            </Grid>
+                        </StackPanel>
                     </GroupBox>
-                </StackPanel>
-
-                <m:Snackbar MessageQueue="{Binding MessageQueue}" IsActive="{Binding IsSnackbarActive}" />
-
+                    <!--#endregion-->
+                </Grid>
             </Grid>
-        </DockPanel>
-
+            <!--#region スナックバー-->
+            <m:Snackbar MessageQueue="{Binding MessageQueue}" IsActive="{Binding IsSnackbarActive}" />
+            <!--#endregion-->
+        </Grid>
     </m:DialogHost>
-
 </UserControl>

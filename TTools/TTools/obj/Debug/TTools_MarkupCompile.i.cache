@@ -10,11 +10,11 @@ none
 false
 DEBUG;TRACE
 C:\Users\tmiy0435\Source\Repos\TTools\TTools\TTools\App.xaml
-5-1880059155
+61257160739
 
-24-964967075
+26-436765725
 911486982153
-Views\Dialogs\LoadingTimeMessageDialog.xaml;Views\Dialogs\DefaultMessageDialog.xaml;Views\MainWindow.xaml;Views\Information.xaml;Views\ImportOrders.xaml;
+Views\Dialogs\LoadingTimeMessageDialog.xaml;Views\Dialogs\DefaultMessageDialog.xaml;Views\OrdersManagement.xaml;Views\MainWindow.xaml;Views\Information.xaml;Views\ImportOrders.xaml;
 
 True
 

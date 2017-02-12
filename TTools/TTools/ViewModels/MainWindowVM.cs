@@ -16,6 +16,7 @@ namespace TTools.ViewModels
             {
                 new SideMenuItem("インフォメーション",new Information()),
                 new SideMenuItem("受注インポート",new ImportOrders(){ DataContext = importOrdersVM }),
+                new SideMenuItem("ＢＳ受注管理",new OrdersManagement(){ DataContext = new BsOrderManagementVM()}),
             };
         }
     }
