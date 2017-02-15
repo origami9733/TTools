@@ -12,23 +12,17 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using TTools.ViewModels;
 
 namespace TTools.Views
 {
-    public partial class OrdersManagement : UserControl
+    /// <summary>
+    /// YorNConfirmWindow.xaml の相互作用ロジック
+    /// </summary>
+    public partial class YorNConfirmWindow : UserControl
     {
-        BsOrderManagementVM vm = new BsOrderManagementVM();
-
-        public OrdersManagement()
+        public YorNConfirmWindow()
         {
             InitializeComponent();
-            DataContext = vm;
-        }
-
-        private void CheckBox_Click(object sender, RoutedEventArgs e)
-        {
-            this.DG1.CancelEdit();
         }
     }
 }

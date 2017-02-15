@@ -1,15 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using TTools.Domain;
 using TTools.EF;
 using TTools.Models;
+using TTools.Views;
 
 namespace TTools.ViewModels
 {
@@ -79,6 +84,11 @@ namespace TTools.ViewModels
         #region コンストラクタ
         public BsOrderManagementVM()
         {
+            this.IsDialogOpen = true;
+            this.Init();
+
+            //ロード中専用のダイログ画面をセット
+            this.DialogContent = new LoadingTimeMessageDialog();
             Load();
         }
         #endregion
@@ -89,11 +99,11 @@ namespace TTools.ViewModels
         #endregion
 
         #region プロパティ
-        private DispatcheObservableCollection<DisplayOrderManagementItem> _displayOrderManagementItems;
-        private DispatcheObservableCollection<OrderItem> _orderItems;
-        private DispatcheObservableCollection<ProductItem> _productItems;
-
-        public DispatcheObservableCollection<DisplayOrderManagementItem> DisplayOrderManagementItems
+        /// <summary>
+        /// ディスパッチャを実装したコレクションクラス
+        /// </summary>
+        private DispatchObservableCollection<DisplayOrderManagementItem> _displayOrderManagementItems;
+        public DispatchObservableCollection<DisplayOrderManagementItem> DisplayOrderManagementItems
         {
             get { return _displayOrderManagementItems; }
             set
@@ -103,39 +113,71 @@ namespace TTools.ViewModels
                 RaisePropertyChanged();
             }
         }
-        public DispatcheObservableCollection<OrderItem> OrderItems
-        {
-            get { return _orderItems; }
-            set
-            {
-                if (_orderItems == value) return;
-                _orderItems = value;
-                RaisePropertyChanged();
-            }
-        }
-        public DispatcheObservableCollection<ProductItem> ProductItems
-        {
-            get { return _productItems; }
-            set
-            {
-                if (_productItems == value) return;
-                _productItems = value;
-                RaisePropertyChanged();
-            }
-        }
+
 
         //チェックボックスヘッダーの状態を保持するプロパティ
         public bool CheckBoxColumnHeaderIsChecked
         {
             get { return DisplayOrderManagementItems?.Count(x => x.IsChecked == true) > 0; }
         }
-
+        //ダイアログ関連
+        private bool _isDialogOpen;
+        private object _dialogContent;
+        public bool IsDialogOpen
+        {
+            get { return _isDialogOpen; }
+            set
+            {
+                if (_isDialogOpen == value) return;
+                _isDialogOpen = value;
+                RaisePropertyChanged();
+            }
+        }
+        public object DialogContent
+        {
+            get { return _dialogContent; }
+            set
+            {
+                if (_dialogContent == value) return;
+                _dialogContent = value;
+                RaisePropertyChanged();
+            }
+        }
+        /// <summary>
+        /// 選択中の状態を保持するプロパティ
+        /// </summary>
+        private string _selectedCategory;
+        private Object _selectedRowItem;
+        public string SelectedCategory
+        {
+            get { return _selectedCategory; }
+            set
+            {
+                if (_selectedCategory != value)
+                {
+                    _selectedCategory = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+        public Object SelectedRowItem
+        {
+            get { return _selectedRowItem; }
+            set
+            {
+                if (_selectedRowItem != value)
+                {
+                    _selectedRowItem = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
         #endregion
 
 
         #region コマンド
         //チェックボックスヘッダーの操作コマンド
-        private ICommand _checkAllCommand;       
+        private ICommand _checkAllCommand;
         public ICommand CheckAllCommand
         {
             get
@@ -162,6 +204,7 @@ namespace TTools.ViewModels
         {
             return DisplayOrderManagementItems != null;
         }
+        //変更の保存コマンド
         private ICommand _saveCommand;
         public ICommand SaveCommand
         {
@@ -176,22 +219,21 @@ namespace TTools.ViewModels
         }
         public void ExecuteSaveCommand(object arg)
         {
+
             Save();
-            MessageBox.Show("a");
         }
         private bool CanExecuteSaveCommand(object arg)
         {
             return DisplayOrderManagementItems != null;
         }
+        //初期化してからリフレッシュするコマンド
         private ICommand _refreshCommand;
         public ICommand RefreshCommand
         {
             get
             {
-                if (_refreshCommand == null)
-                {
-                    _refreshCommand = new RelayCommand<object>(ExecuteRefreshCommand, CanExecuteRefreshCommand);
-                }
+                if (_refreshCommand != null) return _refreshCommand;
+                _refreshCommand = new RelayCommand<object>(ExecuteRefreshCommand, CanExecuteRefreshCommand);
                 return _refreshCommand;
             }
         }
@@ -205,82 +247,286 @@ namespace TTools.ViewModels
             return DisplayOrderManagementItems != null;
         }
 
+        //初期化してからリフレッシュするコマンド
+        private ICommand _groupingCommand;
+        public ICommand GroupingCommand
+        {
+            get
+            {
+                if (_groupingCommand != null) return _refreshCommand;
+                _groupingCommand = new RelayCommand<object>(ExecuteGroupingCommand, CanExecuteGroupingCommandd);
+                return _refreshCommand;
+            }
+        }
+        public void ExecuteGroupingCommand(object arg)
+        {
+        }
+        private bool CanExecuteGroupingCommandd(object arg)
+        {
+            return DisplayOrderManagementItems != null;
+        }
+
+        private ICommand _groupHeaderAddCommand;
+        public ICommand GroupHeaderAddCommand
+        {
+            get
+            {
+                if (_groupHeaderAddCommand != null) return _groupHeaderAddCommand;
+                _groupHeaderAddCommand = new RelayCommand<string>(ExecuteGroupHeaderAddCommand);
+                return _groupHeaderAddCommand;
+            }
+        }
+        public void ExecuteGroupHeaderAddCommand(string arg)
+        {
+            EItemSelect(arg);
+        }
         #endregion
 
 
 
-        
+        #region メソッド
+        /// <summary>
+        /// 初期化を行う。
+        /// </summary>
         private void Init()
         {
             context = null;
             collectionView = null;
-
             DisplayOrderManagementItems = null;
-            OrderItems = null;
-            ProductItems = null;
         }
 
+        /// <summary>
+        /// 保存を行う。
+        /// </summary>
         private void Save()
         {
-            foreach(var a in DisplayOrderManagementItems)
+            foreach (var a in context.ProductItems.Local)
             {
-                if (!context.ProductItems.ToArray().Contains(a.ProductItem))
+                if (!context.ProductItems.ToArray().Contains(a))
                 {
-                    if(a.ProductItem.LongName != null) ProductItems.Add(a.ProductItem);
-
-                    if (a.ProductItem.LongName != null) context.ProductItems.Add(a.ProductItem);
+                    if (!string.IsNullOrEmpty(a.LongName)) context.ProductItems.Add(a);
                 }
             }
+
             context.SaveChanges();
+            Init();
+            Load();
         }
 
 
-        private void Load()
+        private void EItemSelect(string ProductID)
+        {
+            var DialogVM = new EItemSelectDialogVM();
+            var DialogView = new EItemSelectDialog() { DataContext = DialogVM };
+            DialogContent = DialogView;
+
+            DialogView.DG1.PreviewMouseDoubleClick += (x, _) =>
+            {
+                if(DialogVM.SelectedEitem == null)
+                {
+                    return;
+                }
+                else
+                {
+                    YorNConfirmWindow ConfirmView = new YorNConfirmWindow();
+                    ConfirmView.Message.Text = 
+                        DialogVM.SelectedEitem.ID +" を " + ProductID + " に加えますか？";
+
+                    ConfirmView.AcceptBT.Click += (a, b) => { AddProductChildItem(ProductID, DialogVM.SelectedEitem.ID); };
+                    ConfirmView.CancelBT.Click += (a, b) => { DialogContent = DialogView; };
+                    DialogContent = ConfirmView;
+                }
+            };
+
+            DialogView.AddBT.Click += (x, _) =>
+            {
+                if (DialogVM.SelectedEitem == null)
+                {
+                    return;
+                }
+                else
+                {
+                    YorNConfirmWindow ConfirmView = new YorNConfirmWindow();
+                    ConfirmView.Message.Text =
+                        DialogVM.SelectedEitem.ID + "を" + ProductID + "に加えますか？";
+
+                    ConfirmView.AcceptBT.Click += (a, b) => { AddProductChildItem(ProductID, DialogVM.SelectedEitem.ID); };
+                    ConfirmView.CancelBT.Click += (a, b) => { DialogContent = DialogView; };
+
+                    DialogContent = ConfirmView;
+                }
+            };
+
+            DialogView.CancelBT.Click += (x, _) => { IsDialogOpen = false; };
+
+            IsDialogOpen = true;
+        }
+
+
+        private void AddProductChildItem(string productID,string eItemId)
+        {
+            bool relationContain = context.Relationships.ToList().Where(x => x.ProductId == productID & x.EItemId == eItemId).Count() > 0;
+
+            if (relationContain == true)
+            {
+                var AcceptDialogView = new AcceptConfirmDialog();
+                AcceptDialogView.Message.Text = "選択されたアイテムは既に構成情報に含まれています。";
+            }
+            else
+            {
+                if(DisplayOrderManagementItems.Where(x => x.ProductItem.ProductId == productID & x.RelationItem == null).Count() > 0)
+                {
+                    var addItem = new Relationship() { ProductId = productID, EItemId = eItemId };
+                    foreach(var a in DisplayOrderManagementItems)
+                    {
+                        if(a.ProductItem.ProductId == productID& a.RelationItem == null)
+                        {
+                            a.RelationItem = addItem;
+                        }
+                    }
+
+                    context.Relationships.Add(new Relationship() { ProductId = productID, EItemId = eItemId });
+                }
+                else
+                {
+                    var rItem = new Relationship() { ProductId = productID, EItemId = eItemId };
+                    var dummyList = DisplayOrderManagementItems.Where(x => x.ProductItem.ProductId == productID).Select(x => x.OrderItem.伝票ＮＯ).ToList();
+                    List<string> OrderNoList = new List<string>();
+
+                    foreach(var a in dummyList)
+                    {
+                        if(!OrderNoList.Contains(a))
+                        {
+                            OrderNoList.Add(a);
+                        }
+                    }
+
+                    foreach(var a in OrderNoList)
+                    {
+                        var oItem = context.OrderItems.Where(x => x.伝票ＮＯ == a).First();
+                        var pItem = context.ProductItems.Where(x => x.ProductId == productID).First();
+                        var eItem = context.EItems.Where(x => x.ID == eItemId).First();
+
+                        var addItem = new DisplayOrderManagementItem()
+                        {
+                            OrderItem = oItem,
+                            ProductItem = pItem,
+                            RelationItem = rItem,
+                            EItem = eItem,
+                        };
+
+                        DisplayOrderManagementItems.Add(addItem);
+                    }
+                    context.Relationships.Add(rItem);
+                }
+            }
+
+            IsDialogOpen = false;
+        }
+
+
+
+
+
+        private void Grouping()
+        {
+            collectionView.GroupDescriptions.Clear();
+            collectionView.GroupDescriptions.Add(new PropertyGroupDescription("OrderItem.商品コード"));
+            collectionView.Refresh();
+        }
+
+        private async void Load()
         {
             context = new TechnoDB();
             context.OrderItems.ToList();
             context.ProductItems.ToList();
+            context.EItems.ToList();
+            context.Relationships.ToList();
 
-            //派生クラスDispatcheObservableCollectionのコンストラクタを通じて基底クラスへ格納する
-            OrderItems = new DispatcheObservableCollection<OrderItem>(context.OrderItems.Local);
-            ProductItems = new DispatcheObservableCollection<ProductItem>(context.ProductItems.Local);
+            DisplayOrderManagementItems = new DispatchObservableCollection<DisplayOrderManagementItem>();
 
-            DisplayOrderManagementItems = new DispatcheObservableCollection<DisplayOrderManagementItem>();
-
-            foreach (var orderItem in OrderItems)
+            await Task.Factory.StartNew(() =>
             {
-                var AddItem = new DisplayOrderManagementItem();
-
-                AddItem.IsChecked = false;
-                AddItem.OrderItem = orderItem;
-                ProductItem pItem;
-
-                if(ProductItems.Count(y => y.ProductId == orderItem.商品コード) > 0)
+                foreach (var oItem in context.OrderItems.Local)
                 {
-                    pItem = ProductItems.Where(y => y.ProductId == orderItem.商品コード).First();
-                    AddItem.ProductItem = pItem;
+                    var pItem = context.ProductItems.Local.Where(x => x.ProductId == oItem.商品コード).First();
+                    var children = context.Relationships.Local.Where(x => x.ProductId == oItem.商品コード);
+
+                    if (children.Count() == 0)
+                    {
+                        var AddItem = new DisplayOrderManagementItem();
+
+                        AddItem.IsChecked = false;
+                        AddItem.OrderItem = oItem;
+                        AddItem.ProductItem = pItem;
+
+                        DisplayOrderManagementItems.Add(AddItem);
+                    }
+                    else
+                    {
+                        for (int i = 0; i < children.Count(); i++)
+                        {
+                            var AddItem = new DisplayOrderManagementItem();
+
+                            AddItem.IsChecked = false;
+                            AddItem.OrderItem = oItem;
+                            AddItem.ProductItem = pItem;
+                            AddItem.RelationItem = children.ToList()[i];
+                            AddItem.EItem = context.EItems.Local.Where(x => x.ID == AddItem.RelationItem.EItemId).First();
+
+                            DisplayOrderManagementItems.Add(AddItem);
+                        }
+                    }
                 }
-                else
+            }).ContinueWith((Action<Task, object>)((t, _) =>
+            {
+                foreach (var x in DisplayOrderManagementItems)
                 {
-                    pItem = new ProductItem();
-                    pItem.ProductId = orderItem.商品コード;
-                    AddItem.ProductItem = pItem;
-                    ProductItems.Add(pItem);
+                    Observable.FromEventPattern<PropertyChangedEventHandler, PropertyChangedEventArgs>(
+                        h => x.PropertyChanged += h,
+                        h => x.PropertyChanged -= h)
+                        .Subscribe((System.Reactive.EventPattern<PropertyChangedEventArgs> e) =>
+                        {
+                            RaisePropertyChanged("CheckBoxColumnHeaderIsChecked");
+                        });
                 }
+                IsDialogOpen = false;
+                this.collectionView = CollectionViewSource.GetDefaultView(this.DisplayOrderManagementItems);
+            }), null, TaskScheduler.FromCurrentSynchronizationContext());
 
-                DisplayOrderManagementItems.Add(AddItem);
-            }
-
-            this.collectionView = CollectionViewSource.GetDefaultView(this.DisplayOrderManagementItems) as ListCollectionView;
+            collectionView.GroupDescriptions.Clear();
+            collectionView.GroupDescriptions.Add(new PropertyGroupDescription("OrderItem.伝票ＮＯ"));
         }
+
+
+
+        #endregion
+
+        #region DataGridColumn表示設定
+        private bool _isVisible商品コード;
+        public bool IsVisible商品コード
+        {
+            get { return _isVisible商品コード; }
+            set
+            {
+                if (_isVisible商品コード == value) return;
+                _isVisible商品コード = value;
+                RaisePropertyChanged();
+            }
+        }
+        #endregion
     }
 
     //VM用エンティティクラス
     public class DisplayOrderManagementItem : INotifyPropertyChanged
     {
+        #region 変数
         private bool _isChecked;
         private OrderItem _orderItem;
         private ProductItem _productItem;
+        private Relationship _relationItem;
+        private EItem _eItem;
+        #endregion
 
         public bool IsChecked
         {
@@ -309,6 +555,26 @@ namespace TTools.ViewModels
             {
                 if (_productItem == value) return;
                 _productItem = value;
+                RaisePropertyChanged();
+            }
+        }
+        public Relationship RelationItem
+        {
+            get { return _relationItem; }
+            set
+            {
+                if (_relationItem == value) return;
+                _relationItem = value;
+                RaisePropertyChanged();
+            }
+        }
+        public EItem EItem
+        {
+            get { return _eItem; }
+            set
+            {
+                if (_eItem == value) return;
+                _eItem = value;
                 RaisePropertyChanged();
             }
         }

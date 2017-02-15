@@ -6,16 +6,15 @@ namespace TTools.Models
 {
     public class ProductItem : INotifyPropertyChanged
     {
-        #region 変数
         private string _productId;
         private string _longName;
         private string _shortName;
         private string _aliasName;
         private string _price;
         private string _category;
-        #endregion
+        private string _detail;
+        private string _bluePrint;
 
-        #region プロパティ
         [Key]
         public string ProductId
         {
@@ -77,7 +76,26 @@ namespace TTools.Models
                 RaisePropertyChanged();
             }
         }
-        #endregion
+        public string Detail
+        {
+            get { return _detail; }
+            set
+            {
+                if (_detail == value) return;
+                _detail = value;
+                RaisePropertyChanged();
+            }
+        }
+        public string BluePrint
+        {
+            get { return _bluePrint; }
+            set
+            {
+                if (_bluePrint == value) return;
+                _bluePrint = value;
+                RaisePropertyChanged();
+            }
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
         public void RaisePropertyChanged([CallerMemberName]string propertyName = "")

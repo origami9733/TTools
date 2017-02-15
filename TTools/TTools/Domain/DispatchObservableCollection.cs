@@ -10,22 +10,22 @@ using System.Windows.Threading;
 
 namespace TTools.Domain
 {
-    public class DispatcheObservableCollection<T> : ObservableCollection<T>
+    public class DispatchObservableCollection<T> : ObservableCollection<T>
     {
         // CollectionChangedイベントを発行するときに使用するディスパッチャ
         public Dispatcher EventDispatcher { get; set; }
 
         #region コンストラクタ
-        public DispatcheObservableCollection()
+        public DispatchObservableCollection()
         {
             InitializeEventDispatcher();
         }
-        public DispatcheObservableCollection(IEnumerable<T> collection)
+        public DispatchObservableCollection(IEnumerable<T> collection)
             : base(collection)
         {
             InitializeEventDispatcher();
         }
-        public DispatcheObservableCollection(List<T> list)
+        public DispatchObservableCollection(List<T> list)
             : base(list)
         {
             InitializeEventDispatcher();

@@ -89,6 +89,9 @@
       <HintPath>..\packages\ReactiveProperty.3.4.0\lib\net46\ReactiveProperty.NET46.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Smart.Text.Japanese, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Usa.Smart.Text.Japanese.1.0.1\lib\net451\Smart.Text.Japanese.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
@@ -136,17 +139,32 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Domain\AnotherCommandImplementation.cs" />
+    <Compile Include="Domain\BindingProxy.cs" />
     <Compile Include="Domain\DispatchObservableCollection.cs" />
+    <Compile Include="Models\EItem.cs" />
     <Compile Include="Models\OrderItem.cs" />
     <Compile Include="Models\ProductItem.cs" />
     <Compile Include="EF\TechnoDB.cs" />
     <Compile Include="Document\JyuchuViewModel - コピー.cs" />
+    <Compile Include="Models\Relationship.cs" />
+    <Compile Include="Models\StringConverter.cs" />
+    <Compile Include="Settings.cs" />
     <Compile Include="ViewModels\BsOrderManagementVM.cs" />
+    <Compile Include="ViewModels\EItemSekectDialogVM.cs" />
     <Compile Include="ViewModels\ImportOrdersVM.cs" />
     <Compile Include="ViewModels\MainWindowVM.cs" />
     <Compile Include="Domain\RelayCommand.cs" />
+    <Compile Include="Views\Dialogs\AcceptConfirmDialog.xaml.cs">
+      <DependentUpon>AcceptConfirmDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Dialogs\EItemSelectDialog.xaml.cs">
+      <DependentUpon>EItemSelectDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Dialogs\LoadingTimeMessageDialog.xaml.cs">
       <DependentUpon>LoadingTimeMessageDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Dialogs\YorNConfirmWindow.xaml.cs">
+      <DependentUpon>YorNConfirmWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\OrdersManagement.xaml.cs">
       <DependentUpon>OrdersManagement.xaml</DependentUpon>
@@ -157,11 +175,23 @@
     <Compile Include="Views\ImportOrders.xaml.cs">
       <DependentUpon>ImportOrders.xaml</DependentUpon>
     </Compile>
+    <Page Include="Views\Dialogs\AcceptConfirmDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Dialogs\EItemSelectDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Dialogs\LoadingTimeMessageDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Dialogs\DefaultMessageDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Dialogs\YorNConfirmWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -147,9 +147,9 @@ namespace TTools.ViewModels
             }
         }
         //コレクションを保持するプロパティ
-        private DispatcheObservableCollection<OrderItem> _originalOrderItems;
-        private DispatcheObservableCollection<DisplayImportOrderItem> _displayOrderItems;
-        public DispatcheObservableCollection<OrderItem> OriginalOrderItems
+        private DispatchObservableCollection<OrderItem> _originalOrderItems;
+        private DispatchObservableCollection<DisplayImportOrderItem> _displayOrderItems;
+        public DispatchObservableCollection<OrderItem> OriginalOrderItems
         {
             get { return _originalOrderItems; }
             set
@@ -161,7 +161,7 @@ namespace TTools.ViewModels
                 }
             }
         }
-        public DispatcheObservableCollection<DisplayImportOrderItem> DisplayOrderItems
+        public DispatchObservableCollection<DisplayImportOrderItem> DisplayOrderItems
         {
             get { return _displayOrderItems; }
             set
@@ -464,15 +464,54 @@ namespace TTools.ViewModels
         } //全て初期化する。
         private async void DataLoad()
         {
+            context = new TechnoDB();
+
             //非同期で読み込みメソッドをスタート
             await Task.Factory.StartNew(() =>
             {
-                this.OriginalOrderItems = new DispatcheObservableCollection<OrderItem>();
-                this.OriginalOrderItems = this.orderItem.Load(MakeSQL());
+                OriginalOrderItems = new DispatchObservableCollection<OrderItem>();
+                OriginalOrderItems = orderItem.Load(MakeSQL());
+                context.ProductItems.ToList();
+
+                ///<summary>
+                ///取得した受注データの中に未登録の商品コードが存在した場合はその場で登録を行う。
+                ///</summary>
+                foreach(var oItem in OriginalOrderItems)
+                {
+                    if (context.ProductItems.Local.Count(x => x.ProductId == oItem.商品コード) == 0)
+                    {
+                        ProductItem AddItem = new ProductItem();
+                        AddItem.ProductId = oItem.商品コード;
+                        AddItem.AliasName = oItem.商品名;
+                        AddItem.Detail = oItem.仕様_備考;
+                        AddItem.BluePrint = oItem.業者図番;
+                        AddItem.Price = oItem.発注単価;
+
+                        switch (oItem.フラグ１)
+                        {
+                            case " ":
+                                AddItem.Category = "Machine";
+                                break;
+                            case "0":
+                                AddItem.Category = "BS";
+                                break;
+                            case "1":
+                                AddItem.Category = "PL";
+                                break;
+                            case null:
+                                break;
+                        }
+
+                        context.ProductItems.Add(AddItem);
+
+                        AddItem = null;
+                    }
+                }
+                context.SaveChanges();
             })
                 .ContinueWith((Action<Task, object>)((t, _) =>
                 {
-                    this.DisplayOrderItems = new DispatcheObservableCollection<DisplayImportOrderItem>();
+                    this.DisplayOrderItems = new DispatchObservableCollection<DisplayImportOrderItem>();
 
                     //要素アイテムのイベント処理
                     foreach (var x in this.OriginalOrderItems)

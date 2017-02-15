@@ -1,4 +1,5 @@
-﻿using TTools.Models;
+﻿using System.Windows.Controls;
+using TTools.Models;
 using TTools.Views;
 
 namespace TTools.ViewModels
@@ -10,13 +11,11 @@ namespace TTools.ViewModels
 
         public MainWindowVM()
         {
-            importOrdersVM = new ImportOrdersVM();
-
             SideMenuItems = new[]
             {
                 new SideMenuItem("インフォメーション",new Information()),
-                new SideMenuItem("受注インポート",new ImportOrders(){ DataContext = importOrdersVM }),
-                new SideMenuItem("ＢＳ受注管理",new OrdersManagement(){ DataContext = new BsOrderManagementVM()}),
+                new SideMenuItem("受注インポート",new ImportOrders(){}),
+                new SideMenuItem("ＢＳ受注管理",new OrdersManagement(){}),
             };
         }
     }

@@ -1,0 +1,59 @@
+﻿<UserControl x:Class="TTools.Views.EItemSelectDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:TTools.Views"
+             xmlns:domain="clr-namespace:TTools.Domain"
+             xmlns:m="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal">
+            <TextBox VerticalAlignment="Top" HorizontalAlignment="Left" 
+                     Text="{Binding SearchString,UpdateSourceTrigger=PropertyChanged}"
+                     m:HintAssist.Hint="検索ワード"
+                     Width="200" Height="30"/>
+        </StackPanel>
+
+        <DataGrid  x:Name="DG1"
+                   Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center"
+                   ItemsSource="{Binding EItems,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
+                   SelectedItem="{Binding SelectedEitem,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
+                   EnableRowVirtualization="True"
+                   CanUserAddRows="False" IsReadOnly="True"
+                   m:DataGridAssist.CellPadding="13 8 8 8"
+                   m:DataGridAssist.ColumnHeaderPadding="8">
+            <DataGrid.Resources>
+                <domain:BindingProxy x:Key="Proxy" Data="{Binding}"/>
+            </DataGrid.Resources>
+        </DataGrid>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0" x:Name="AddBT"
+                    IsDefault="True" 
+                    Style="{DynamicResource MaterialDesignFlatButton}"
+                    HorizontalAlignment="Center"
+                    Margin="16 16 16 0">
+                ACCEPT
+            </Button>
+            <Button Grid.Column="1" x:Name="CancelBT" IsDefault="True" 
+                    Style="{DynamicResource MaterialDesignFlatButton}"
+                    HorizontalAlignment="Center"
+                    Margin="16 16 16 0">
+                CANCEL
+            </Button>
+        </Grid>
+    </Grid>
+</UserControl>

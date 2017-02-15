@@ -41,13 +41,16 @@
                           m:DataGridAssist.CellPadding="13 8 8 8"
                           m:DataGridAssist.ColumnHeaderPadding="8"
                           VerticalContentAlignment="Center">
+                    <DataGrid.Resources>
+                        <TextBox x:Key="Dummy1"/>
+                    </DataGrid.Resources>
+                    
                     <DataGrid.Columns>
                         <DataGridCheckBoxColumn Binding="{Binding IsChecked,UpdateSourceTrigger=PropertyChanged}"
                                                 ElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnStyle}"
                                                 EditingElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnEditingStyle}">
                             <DataGridCheckBoxColumn.Header>
-                                <CheckBox HorizontalAlignment="Center" VerticalAlignment="Center"
-                                          DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}, Path=DataContext}"
+                                <CheckBox HorizontalAlignment="Center" VerticalAlignment="Center" x:Name="CheckBox1"
                                           IsChecked="{Binding CheckBoxColumnHeaderIsChecked,UpdateSourceTrigger=PropertyChanged,Mode=OneWay}" 
                                           Click="CheckBox_Click"
                                           Command= "{Binding CheckAllCommand}"
