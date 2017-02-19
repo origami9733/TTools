@@ -465,12 +465,12 @@ namespace TTools.ViewModels
         private async void DataLoad()
         {
             context = new TechnoDB();
-
+            var ghContext = new BeautyGhContext();
             //非同期で読み込みメソッドをスタート
             await Task.Factory.StartNew(() =>
             {
                 OriginalOrderItems = new DispatchObservableCollection<OrderItem>();
-                OriginalOrderItems = orderItem.Load(MakeSQL());
+                OriginalOrderItems = ghContext.Load(MakeSQL());
                 context.ProductItems.ToList();
 
                 ///<summary>

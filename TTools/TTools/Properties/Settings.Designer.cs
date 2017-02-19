@@ -70,5 +70,53 @@ namespace TTools.Properties {
                 this["BeautyDbPass"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("192.168.100.18")]
+        public string TpicsDbIP {
+            get {
+                return ((string)(this["TpicsDbIP"]));
+            }
+            set {
+                this["TpicsDbIP"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("TX40_TKT")]
+        public string TpicsDbName {
+            get {
+                return ((string)(this["TpicsDbName"]));
+            }
+            set {
+                this["TpicsDbName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("sa")]
+        public string TpicsDbUser {
+            get {
+                return ((string)(this["TpicsDbUser"]));
+            }
+            set {
+                this["TpicsDbUser"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("whatisyourname")]
+        public string TpicsDbPass {
+            get {
+                return ((string)(this["TpicsDbPass"]));
+            }
+            set {
+                this["TpicsDbPass"] = value;
+            }
+        }
     }
 }

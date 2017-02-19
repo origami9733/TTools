@@ -14,5 +14,17 @@
     <Setting Name="BeautyDbPass" Type="System.String" Scope="User">
       <Value Profile="(Default)">beauty</Value>
     </Setting>
+    <Setting Name="TpicsDbIP" Type="System.String" Scope="User">
+      <Value Profile="(Default)">192.168.100.18</Value>
+    </Setting>
+    <Setting Name="TpicsDbName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">TX40_TKT</Value>
+    </Setting>
+    <Setting Name="TpicsDbUser" Type="System.String" Scope="User">
+      <Value Profile="(Default)">sa</Value>
+    </Setting>
+    <Setting Name="TpicsDbPass" Type="System.String" Scope="User">
+      <Value Profile="(Default)">whatisyourname</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

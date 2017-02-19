@@ -23,7 +23,7 @@
 
     <m:DialogHost IsOpen="{Binding IsDialogOpen}" DialogContent="{Binding DialogContent}" CloseOnClickAway="False" >
         <Grid>
-            <Grid Margin="18 13 23 23">
+            <Grid Margin="18 13 23 30">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="1*"/>
                 </Grid.RowDefinitions>

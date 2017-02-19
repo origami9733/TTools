@@ -12,6 +12,7 @@ using TTools.Models;
 using Microsoft.VisualBasic;
 using Smart.Text.Japanese;
 using System.Diagnostics;
+using System.Windows.Input;
 
 namespace TTools.ViewModels
 {
@@ -59,11 +60,56 @@ namespace TTools.ViewModels
 
         public EItemSelectDialogVM()
         {
-            context = new TechnoDB();
-            context.EItems.ToArray();
-            EItems = new DispatchObservableCollection<EItem>(context.EItems.Local);
+            Reload();
+        }
+
+        private async void Reload()
+        {
+            await Task.Run(() =>
+            {
+                context = new TechnoDB();
+                EItems = new DispatchObservableCollection<EItem>(context.EItems);
+            });
+
             collectionView = CollectionViewSource.GetDefaultView(EItems);
         }
+
+        private ICommand _eItemAddCommand;
+        public ICommand EItemAddCommand
+        {
+            get
+            {
+                if (_eItemAddCommand != null) return _eItemAddCommand;
+                _eItemAddCommand = new RelayCommand<object>(ExecuteEItemAddCommand);
+                return _eItemAddCommand;
+            }
+        }
+        public void ExecuteEItemAddCommand(object arg)
+        {
+            string id;
+            using (TechnoDB newContext = new TechnoDB())
+            {
+                id = newContext.EItems.Select(x => x.ID).Max();
+            }
+            int id2 = int.Parse(id);
+            id2++;
+            id = id2.ToString();
+
+            string add0 = null;
+
+            for (int i = 0; i < (5 - id.Length); i++)
+            {
+                add0 = "0" + add0;
+            }
+
+            var item = new EItem();
+            item.ID = add0 + id;
+            context.EItems.Add(item);
+            SearchString = null;
+            context.SaveChanges();
+            Reload();
+        }
+
 
         private void SetFilter()
         {

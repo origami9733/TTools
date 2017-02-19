@@ -10,11 +10,11 @@ none
 false
 DEBUG;TRACE
 C:\Users\tmiy0435\Source\Repos\TTools\TTools\TTools\App.xaml
-91359734568
+111046919078
 
-311903442131
+341693752641
 92-918184142
-Views\Dialogs\AcceptConfirmDialog.xaml;Views\Dialogs\EItemSelectDialog.xaml;Views\Dialogs\LoadingTimeMessageDialog.xaml;Views\Dialogs\DefaultMessageDialog.xaml;Views\Dialogs\YorNConfirmWindow.xaml;Views\OrdersManagement.xaml;Views\MainWindow.xaml;Views\Information.xaml;Views\ImportOrders.xaml;
+Views\Dialogs\AcceptConfirmDialog.xaml;Views\Dialogs\EItemSelectDialog.xaml;Views\Dialogs\LoadingTimeMessageDialog.xaml;Views\Dialogs\DefaultMessageDialog.xaml;Views\Dialogs\YorNConfirmWindow.xaml;Views\OrdersManagement.xaml;Views\MainWindow.xaml;Views\Information.xaml;Views\ImportOrders.xaml;Views\RelationEdit.xaml;Views\WaitingOrders.xaml;
 
 False
 

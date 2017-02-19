@@ -44,9 +44,7 @@
                           m:DataGridAssist.ColumnHeaderPadding="8"
                           VerticalContentAlignment="Center">
                     <DataGrid.Resources>
-                        <!--
-                            BindingProxyのリソース定義
-                            Dataには、DataContextが設定される。-->
+                        <!--BindingProxyのリソース定義。Dataには、DataContextが設定される。-->
                         <domain:BindingProxy x:Key="Proxy" Data="{Binding}"/>
                     </DataGrid.Resources>
                     <!--#region グループの設定-->
@@ -60,16 +58,22 @@
                                                 <Expander IsExpanded="True">
                                                     <Expander.Header>
                                                         <StackPanel Orientation="Horizontal">
-                                                            <Button Width="22" Height="22" Margin="0 0 15 0"
+                                                            <Button Width="18" Height="18" Margin="0 0 15 0" FontSize="12"
                                                                     Background="White" VerticalAlignment="Center"
-                                                                    Command="{Binding Data.GroupHeaderAddCommand,
-                                                                            UpdateSourceTrigger=PropertyChanged,
-                                                                            Source={StaticResource Proxy}}"
-                                                                    CommandParameter="{Binding Items[0].OrderItem.商品コード}"
+                                                                    Command="{Binding Data.GroupHeaderAddEItemCommand,UpdateSourceTrigger=PropertyChanged,Source={StaticResource Proxy}}"
+                                                                    CommandParameter="{Binding Items}"
                                                                     Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}">
-                                                                ＋
+                                                                +
+                                                            </Button>
+                                                            <Button Width="18" Height="18" Margin="0 0 15 0" FontSize="12"
+                                                                    Background="White" VerticalAlignment="Center"
+                                                                    Command="{Binding Data.GroupHeaderRefreshCommand,UpdateSourceTrigger=PropertyChanged,Source={StaticResource Proxy}}"
+                                                                    CommandParameter="{Binding Items}"
+                                                                    Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}">
+                                                                R
                                                             </Button>
                                                             <TextBlock FontSize="15" Text="{Binding Items[0].OrderItem.伝票ＮＯ}" VerticalAlignment="Center"/>
+                                                            <TextBlock Margin="10 10 10 10" FontSize="15" Text="{Binding Items[0].ProductItem.ProductId}" VerticalAlignment="Center"/>
                                                         </StackPanel>
                                                     </Expander.Header>
                                                     <Expander.Content>
@@ -85,47 +89,39 @@
                     </DataGrid.GroupStyle>
                     <!--#endregion-->
                     <DataGrid.Columns>
-                        <DataGridCheckBoxColumn Binding="{Binding IsChecked,UpdateSourceTrigger=PropertyChanged}"
-                                                ElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnStyle}"
-                                                EditingElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnEditingStyle}">
-                            <DataGridCheckBoxColumn.Header>
-                                <CheckBox HorizontalAlignment="Center" VerticalAlignment="Center" x:Name="CheckBox1"
-                                          IsChecked="{Binding Data.CheckBoxColumnHeaderIsChecked,UpdateSourceTrigger=PropertyChanged,Mode=OneWay,Source={StaticResource Proxy}}" 
-                                          Click="CheckBox_Click"
-                                          Command= "{Binding Data.CheckAllCommand,Source={StaticResource Proxy}}"
-                                          CommandParameter="{Binding RelativeSource={RelativeSource Self},Path=IsChecked}">
-                                </CheckBox>
-                            </DataGridCheckBoxColumn.Header>
-                        </DataGridCheckBoxColumn>
-
                         <m:MaterialDataGridTextColumn Header="商品コード" Binding="{Binding OrderItem.商品コード}"
                                                       MaxLength="20" FontSize="12" IsReadOnly="True"
                                                       Visibility="{Binding Data.IsVisible商品コード,Converter={StaticResource BoolToVisible},UpdateSourceTrigger=PropertyChanged,Source={StaticResource Proxy}}"
                                                       EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" />
                         <m:MaterialDataGridTextColumn Header="アイテムコード" Binding="{Binding RelationItem.EItemId}" 
-                                                      MaxLength="10" FontSize="15" IsReadOnly="True"
+                                                      MaxLength="10" FontSize="12" IsReadOnly="True"
                                                       EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" />
-                        <m:MaterialDataGridTextColumn Header="名称" Binding="{Binding EItem.Name}"
+                        <m:MaterialDataGridTextColumn Header="名称" Binding="{Binding EItem.Name,UpdateSourceTrigger=LostFocus,Mode=TwoWay}"
                                                       MaxLength="100" FontSize="12"
                                                       EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" />
                         <m:MaterialDataGridTextColumn Header="型式" Binding="{Binding EItem.Model}"
                                                       MaxLength="100" FontSize="12"
                                                       EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" />
                         <m:MaterialDataGridTextColumn Header="価格" Binding="{Binding EItem.Price}"
-                                                      MaxLength="10" FontSize="15"
+                                                      MaxLength="10" FontSize="12"
                                                       EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" />
                         <m:MaterialDataGridTextColumn Header="数量" Binding="{Binding RelationItem.Amount}"
                                                       MaxLength="5" FontSize="12"
                                                       EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" />
                         <m:MaterialDataGridTextColumn Header="業者コード" Binding="{Binding EItem.Vender}"
-                                                      MaxLength="5" FontSize="15"
+                                                      MaxLength="12" FontSize="12"
+                                                      EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" />
+                        <m:MaterialDataGridTextColumn Header="業者名" Binding="{Binding VendorItem.Name}"
+                                                      MaxLength="50" FontSize="12" IsReadOnly="True"
+                                                      EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" />
+                        <m:MaterialDataGridTextColumn Header="MAIL" Binding="{Binding VendorItem.Mail}"
+                                                      MaxLength="50" FontSize="12" IsReadOnly="True"
                                                       EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" />
                     </DataGrid.Columns>
                 </DataGrid>
                 <StackPanel Grid.Column="1">
-                    <Button Command="{Binding SaveCommand}" Content="Save"/>
-                    <Button Command="{Binding RefreshCommand}" Margin="0 10 0 0" Content="Refresh"/>
-                    <Button Command="{Binding GroupingCommand}" Margin="0 10 0 0" Content="Grouping"/>
+                    <Button Command="{Binding LoadCommand}" Content="Load"/>
+                    <Button Command="{Binding SelectedRelationDeleteCommand}" Content="Delete"/> 
                     <ToggleButton IsChecked="{Binding IsVisible商品コード}" Content="×" Style="{StaticResource MaterialDesignActionToggleButton}"/>
                 </StackPanel>
             </Grid>

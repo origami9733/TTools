@@ -18,6 +18,7 @@ namespace TTools.Models
         private string _price;
         private string _category;
         private string _vendorId;
+        private float _leadTime;
 
         [Key]
         public string ID
@@ -80,8 +81,17 @@ namespace TTools.Models
                 RaisePropertyChanged();
             }
         }
+        public float LeadTime
+        {
+            get { return _leadTime; }
+            set
+            {
+                if (_leadTime == value) return;
+                _leadTime = value;
+                RaisePropertyChanged();
+            }
+        }
 
-        public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
         /// フィルター条件を指定する際にforeachでプロパティを回す為。
@@ -94,8 +104,10 @@ namespace TTools.Models
             yield return Model;
             yield return Price;
             yield return Vender;
+            yield return LeadTime;
         }
 
+        public event PropertyChangedEventHandler PropertyChanged;
         public void RaisePropertyChanged([CallerMemberName]string propertyName = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

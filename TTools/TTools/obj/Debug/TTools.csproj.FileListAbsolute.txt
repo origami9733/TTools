@@ -162,3 +162,7 @@ C:\Users\tmiy0435\Source\Repos\TTools\TTools\TTools\obj\Debug\Views\Dialogs\YorN
 C:\Users\tmiy0435\Source\Repos\TTools\TTools\TTools\obj\Debug\Views\Dialogs\YorNConfirmWindow.baml
 C:\Users\tmiy0435\Source\Repos\TTools\TTools\TTools\obj\Debug\Views\Dialogs\AcceptConfirmDialog.g.cs
 C:\Users\tmiy0435\Source\Repos\TTools\TTools\TTools\obj\Debug\Views\Dialogs\AcceptConfirmDialog.baml
+C:\Users\tmiy0435\Source\Repos\TTools\TTools\TTools\obj\Debug\Views\WaitingOrders.g.cs
+C:\Users\tmiy0435\Source\Repos\TTools\TTools\TTools\obj\Debug\Views\WaitingOrders.baml
+C:\Users\tmiy0435\Source\Repos\TTools\TTools\TTools\obj\Debug\Views\RelationEdit.g.cs
+C:\Users\tmiy0435\Source\Repos\TTools\TTools\TTools\obj\Debug\Views\RelationEdit.baml
