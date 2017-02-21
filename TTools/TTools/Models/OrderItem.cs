@@ -1,18 +1,14 @@
-﻿using System.Data;
-using System.Data.SqlClient;
+﻿using System;
+using System.Collections;
 using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using TTools.Domain;
 using System.ComponentModel.DataAnnotations;
-using System.Collections.ObjectModel;
-using TTools.Properties;
+using System.Runtime.CompilerServices;
 
 namespace TTools.Models
 {
-    public class OrderItem : INotifyPropertyChanged
+    public class OrderItem : INotifyPropertyChanged,IEnumerable
     {
         #region 変数
-        //エンティティ
         private string _伝票ＮＯ;
         private string _営業所コード;
         private string _営業所名;
@@ -39,8 +35,8 @@ namespace TTools.Models
         private string _商品名;
         private string _仕様_備考;
         private string _業者図番;
-        private string _発注数量;
-        private string _発注単価;
+        private int _発注数量;
+        private float _発注単価;
         private string _発注金額;
         private string _サイクル区分;
         private string _送区分;
@@ -68,7 +64,16 @@ namespace TTools.Models
         private string _更新日付;
         private string _更新時刻;
         private string _発注連絡事項;
+        private string _orderStatus;
+        private string _shippingCompanyName;
+        private string _shippingCompanyTel;
+        private string _invoiceNo;
+        private string _replyStatus;
+        private string _replyDate;
+        private string _receivedDate;
+
         #endregion
+
         #region プロパティ
         [Key]
         public string 伝票ＮＯ
@@ -383,8 +388,7 @@ namespace TTools.Models
                 }
             }
         }
-
-        public string 発注数量
+        public int 発注数量
         {
             get { return _発注数量; }
             set
@@ -396,8 +400,7 @@ namespace TTools.Models
                 }
             }
         }
-
-        public string 発注単価
+        public float 発注単価
         {
             get { return _発注単価; }
             set
@@ -409,7 +412,6 @@ namespace TTools.Models
                 }
             }
         }
-
         public string 発注金額
         {
             get { return _発注金額; }
@@ -422,7 +424,6 @@ namespace TTools.Models
                 }
             }
         }
-
         public string サイクル区分
         {
             get { return _サイクル区分; }
@@ -435,7 +436,6 @@ namespace TTools.Models
                 }
             }
         }
-
         public string 送区分
         {
             get { return _送区分; }
@@ -448,7 +448,6 @@ namespace TTools.Models
                 }
             }
         }
-
         public string 発注入力振分区分
         {
             get { return _発注入力振分区分; }
@@ -461,7 +460,6 @@ namespace TTools.Models
                 }
             }
         }
-
         public string 発注入力振分グループ番号
         {
             get { return _発注入力振分グループ番号; }
@@ -474,7 +472,6 @@ namespace TTools.Models
                 }
             }
         }
-
         public string 周辺機器グループ番号
         {
             get { return _周辺機器グループ番号; }
@@ -487,7 +484,6 @@ namespace TTools.Models
                 }
             }
         }
-
         public string 発注回数
         {
             get { return _発注回数; }
@@ -500,7 +496,6 @@ namespace TTools.Models
                 }
             }
         }
-
         public string 元_伝票ＮＯ
         {
             get { return _元_伝票ＮＯ; }
@@ -513,7 +508,6 @@ namespace TTools.Models
                 }
             }
         }
-
         public string 要請年月日
         {
             get { return _要請年月日; }
@@ -526,7 +520,6 @@ namespace TTools.Models
                 }
             }
         }
-
         public string 契約番号
         {
             get { return _契約番号; }
@@ -539,7 +532,6 @@ namespace TTools.Models
                 }
             }
         }
-
         public string フラグ１
         {
             get { return _フラグ１; }
@@ -552,7 +544,6 @@ namespace TTools.Models
                 }
             }
         }
-
         public string フラグ２
         {
             get { return _フラグ２; }
@@ -565,7 +556,6 @@ namespace TTools.Models
                 }
             }
         }
-
         public string フラグ３
         {
             get { return _フラグ３; }
@@ -578,7 +568,6 @@ namespace TTools.Models
                 }
             }
         }
-
         public string フラグ４
         {
             get { return _フラグ４; }
@@ -591,7 +580,6 @@ namespace TTools.Models
                 }
             }
         }
-
         public string フラグ５
         {
             get { return _フラグ５; }
@@ -604,7 +592,6 @@ namespace TTools.Models
                 }
             }
         }
-
         public string フラグ６
         {
             get { return _フラグ６; }
@@ -617,7 +604,6 @@ namespace TTools.Models
                 }
             }
         }
-
         public string フラグ７
         {
             get { return _フラグ７; }
@@ -630,7 +616,6 @@ namespace TTools.Models
                 }
             }
         }
-
         public string フラグ８
         {
             get { return _フラグ８; }
@@ -643,7 +628,6 @@ namespace TTools.Models
                 }
             }
         }
-
         public string フラグ９
         {
             get { return _フラグ９; }
@@ -656,7 +640,6 @@ namespace TTools.Models
                 }
             }
         }
-
         public string フラグ１０
         {
             get { return _フラグ１０; }
@@ -669,7 +652,6 @@ namespace TTools.Models
                 }
             }
         }
-
         public string 業者連絡事項
         {
             get { return _業者連絡事項; }
@@ -682,7 +664,6 @@ namespace TTools.Models
                 }
             }
         }
-
         public short 伝送フラグ
         {
             get { return _伝送フラグ; }
@@ -695,7 +676,6 @@ namespace TTools.Models
                 }
             }
         }
-
         public string 更新フラグ
         {
             get { return _更新フラグ; }
@@ -708,7 +688,6 @@ namespace TTools.Models
                 }
             }
         }
-
         public short 更新者
         {
             get { return _更新者; }
@@ -721,7 +700,6 @@ namespace TTools.Models
                 }
             }
         }
-
         public string 更新日付
         {
             get { return _更新日付; }
@@ -734,7 +712,6 @@ namespace TTools.Models
                 }
             }
         }
-
         public string 更新時刻
         {
             get { return _更新時刻; }
@@ -747,7 +724,6 @@ namespace TTools.Models
                 }
             }
         }
-
         public string 発注連絡事項
         {
             get { return _発注連絡事項; }
@@ -760,13 +736,6 @@ namespace TTools.Models
                 }
             }
         }
-        #endregion
-
-        private string _orderStatus;
-        private string _shippingCompanyName;
-        private string _shippingCompanyTel;
-        private string _invoiceNo;
-
         public string OrderStatus
         {
             get { return _orderStatus; }
@@ -807,7 +776,85 @@ namespace TTools.Models
                 RaisePropertyChanged();
             }
         }
+        public string ReplyStatus
+        {
+            get { return _replyStatus; }
+            set
+            {
+                if (_replyStatus == value) return;
+                _replyStatus = value;
+                RaisePropertyChanged();
+            }
+        }
+        public string ReplyDate
+        {
+            get { return _replyDate; }
+            set
+            {
+                if (_replyDate == value) return;
+                _replyDate = value;
+                RaisePropertyChanged();
+            }
+        }
+        public string ReceivedDate
+        {
+            get { return _receivedDate; }
+            set
+            {
+                if (_receivedDate == value) return;
+                _receivedDate = value;
+                RaisePropertyChanged();
+            }
+        }
+        #endregion
 
+
+
+        public IEnumerator GetEnumerator()
+        {
+            yield return 伝票ＮＯ;
+            yield return 営業所コード;
+            yield return 営業所名;
+            yield return 営業所電話番号;
+            yield return 物流発注年月日;
+            yield return 発注先コード;
+            yield return 発注先名称;
+            yield return 仕入先コード;
+            yield return 仕入先名称;
+            yield return 納入先コード;
+            yield return 納入先名称;
+            yield return 納入先ＳＳ名称;
+
+            yield return 納入先マークコード;
+            yield return 納入先マーク名;
+            yield return 納入先郵便番号;
+            yield return 納入先住所_市町村名;
+            yield return 納入先住所_番地;
+            yield return 納入先住所_ビル名;
+            yield return 納入先電話番号;
+
+            yield return 機種コード;
+            yield return 機種名;
+
+            yield return 機番;
+            yield return 商品コード;
+            yield return 商品名;
+            yield return 仕様_備考;
+            yield return 業者図番;
+            yield return 発注数量;
+            yield return 発注単価;
+            yield return 発注金額;
+
+            yield return サイクル区分;
+            yield return 送区分;
+            yield return 商品名;
+            yield return 仕様_備考;
+            yield return 業者図番;
+            yield return 契約番号;
+            yield return 業者連絡事項;
+            yield return 発注連絡事項;
+
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
         public void RaisePropertyChanged([CallerMemberName]string propertyName = "")

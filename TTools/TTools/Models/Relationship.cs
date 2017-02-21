@@ -1,19 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TTools.Models
 {
-    public class Relationship : INotifyPropertyChanged
+    public class RelationItem : INotifyPropertyChanged
     {
         private string _productId;
-        private string _eitemId;
+        private string _eItemId;
         private string _amount;
 
         [Key]
@@ -32,11 +27,11 @@ namespace TTools.Models
         [Column(Order = 1)]
         public string EItemId
         {
-            get { return _eitemId; }
+            get { return _eItemId; }
             set
             {
-                if (_eitemId == value) return;
-                _eitemId = value;
+                if (_eItemId == value) return;
+                _eItemId = value;
                 RaisePropertyChanged();
             }
         }

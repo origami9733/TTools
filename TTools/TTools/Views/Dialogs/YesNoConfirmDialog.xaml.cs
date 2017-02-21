@@ -2,9 +2,9 @@
 
 namespace TTools.Views
 {
-    public partial class SelectEItemDialog : UserControl
+    public partial class YesNoConfirmDialog : UserControl
     {
-        public SelectEItemDialog()
+        public YesNoConfirmDialog()
         {
             InitializeComponent();
         }

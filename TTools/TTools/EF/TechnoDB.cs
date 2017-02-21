@@ -13,6 +13,6 @@
         public virtual DbSet<OrderItem> OrderItems { get; set; }
         public virtual DbSet<ProductItem> ProductItems { get; set; }
         public virtual DbSet<EItem> EItems { get; set; }
-        public virtual DbSet<Relationship> Relationships { get; set; }
+        public virtual DbSet<RelationItem> RelationItems { get; set; }
     }
 }

@@ -1,18 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
+﻿using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TTools.Properties;
 using TTools.Models;
+using TTools.Properties;
 
 namespace TTools.Domain
 {
-    public class TpicsDbContext
+    public static class TpicsDbContext
     {
-        public DispatchObservableCollection<VendorItem> Load()
+        /// <summary>
+        /// ベンダーテーブルのロード
+        /// </summary>
+        /// <returns></returns>
+        public static DispatchObservableCollection<VendorItem> LoadVendor()
         {
             //Setting読み込み
             string dbServer = Settings.Default.TpicsDbIP;
@@ -61,6 +60,45 @@ namespace TTools.Domain
             }
 
             return items;
+        }
+
+        /// <summary>
+        /// カレンダーの取得
+        /// </summary>
+        /// <param name="dateTime"></param>
+        /// <returns></returns>
+        public static DataTable LoadCalendar(string dateTime)
+        {
+            //Setting読み込み
+            string dbServer = Settings.Default.TpicsDbIP;
+            string dbName = Settings.Default.TpicsDbName;
+            string dbUser = Settings.Default.TpicsDbUser;
+            string dbPassword = Settings.Default.TpicsDbPass;
+
+            //接続文字列
+            string conString =
+                "Data Source = " + dbServer + ";" +
+                "Initial Catalog = " + dbName + ";" +
+                "User ID = " + dbUser + ";" +
+                "Password = " + dbPassword;
+
+            //SQL文字列
+            string sqlString = "SELECT * FROM dbo.XCALE WHERE CALENAME >= '" + dateTime + "'";
+
+            //DataTableへ読み込み
+            DataTable dataTable;
+            using (SqlConnection con = new SqlConnection(conString))
+            {
+                SqlCommand cmd = new SqlCommand(sqlString, con);
+
+                SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(cmd);
+
+                dataTable = new DataTable();
+
+                sqlDataAdapter.Fill(dataTable);
+            }
+
+            return dataTable;
         }
     }
 }

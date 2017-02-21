@@ -3,31 +3,18 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:m="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:domain="clr-namespace:TTools.Domain"
         mc:Ignorable="d"
-        Title="TTools" Height="800" Width="1100"
+        Title="TTools" Height="800" Width="1200"
         FontFamily="{StaticResource MaterialDesignFont}"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         TextElement.FontWeight="Regular" TextElement.FontSize="13"
-        TextOptions.TextFormattingMode="Ideal" TextOptions.TextRenderingMode="Auto"        
+        TextOptions.TextFormattingMode="Ideal" TextOptions.TextRenderingMode="Aliased"        
         Background="{DynamicResource MaterialDesignPaper}">
-    <Window.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Shadows.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ToggleButton.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </Window.Resources>
-
-    <!--ダイアログルート-->
-    <materialDesign:DialogHost Identifier="RootDialog">
-
-        <!--サイドコントロールホスト-->
-        <materialDesign:DrawerHost IsLeftDrawerOpen="{Binding ElementName=MenuToggleButton,Path=IsChecked}">
-            <materialDesign:DrawerHost.LeftDrawerContent>
+    <m:DialogHost Identifier="RootDialog">
+        <m:DrawerHost IsLeftDrawerOpen="{Binding ElementName=MenuToggleButton,Path=IsChecked}">
+            <m:DrawerHost.LeftDrawerContent>
                 <DockPanel MinWidth="212">
                     <ToggleButton Style="{StaticResource MaterialDesignHamburgerToggleButton}"
                                   DockPanel.Dock="Top"
@@ -43,17 +30,15 @@
                         </ListBox.ItemTemplate>
                     </ListBox>
                 </DockPanel>
-            </materialDesign:DrawerHost.LeftDrawerContent>
+            </m:DrawerHost.LeftDrawerContent>
 
             <DockPanel>
-                <!--ヘッダ-->
-                <materialDesign:ColorZone Padding="16" materialDesign:ShadowAssist.ShadowDepth="Depth2"
+                <m:ColorZone Padding="16" m:ShadowAssist.ShadowDepth="Depth2"
                                           Mode="PrimaryMid" DockPanel.Dock="Top">
                     <DockPanel>
                         <ToggleButton Style="{StaticResource MaterialDesignHamburgerToggleButton}" IsChecked="False"
                                       x:Name="MenuToggleButton"/>
-                        <!--画面右上ポップアップコントロール-->
-                        <materialDesign:PopupBox DockPanel.Dock="Right" PlacementMode="BottomAndAlignRightEdges" StaysOpen="False">
+                        <m:PopupBox DockPanel.Dock="Right" PlacementMode="BottomAndAlignRightEdges" StaysOpen="False">
                             <StackPanel>
                                 <Button Content="ヘルプ" Click="MenuPopupButton_OnClick_Async"/>
                                 <Button Content="ユーザー情報" Click="MenuPopupButton_OnClick_Async"/>
@@ -61,14 +46,12 @@
                                 <Separator/>
                                 <Button Content="バージョン情報" Click="MenuPopupButton_OnClick_Async"/>
                             </StackPanel>
-                        </materialDesign:PopupBox>
-                        <!--選択中の画面名称-->
+                        </m:PopupBox>
                         <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="22"
                                    Text="{Binding ElementName=SideMenuItemsListBox,Path=SelectedItem.Name}"/>
                     </DockPanel>
-                </materialDesign:ColorZone>
+                </m:ColorZone>
 
-                <!--中央描画部-->
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -77,6 +60,6 @@
                     <ContentControl Margin="0" Content="{Binding ElementName=SideMenuItemsListBox,Path=SelectedItem.Content}" Grid.Row="1"/>
                 </Grid>
             </DockPanel>
-        </materialDesign:DrawerHost>
-    </materialDesign:DialogHost>
+        </m:DrawerHost>
+    </m:DialogHost>
 </Window>

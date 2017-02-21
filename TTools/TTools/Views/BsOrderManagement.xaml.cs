@@ -12,15 +12,13 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using TTools.ViewModels;
 
 namespace TTools.Views
 {
-    /// <summary>
-    /// YorNConfirmWindow.xaml の相互作用ロジック
-    /// </summary>
-    public partial class YorNConfirmWindow : UserControl
+    public partial class BsOrdersManagement : UserControl
     {
-        public YorNConfirmWindow()
+        public BsOrdersManagement()
         {
             InitializeComponent();
         }

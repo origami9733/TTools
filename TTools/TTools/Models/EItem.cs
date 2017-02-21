@@ -15,13 +15,13 @@ namespace TTools.Models
         private string _id;
         private string _name;
         private string _model;
-        private string _price;
+        private float _price;
         private string _category;
         private string _vendorId;
-        private float _leadTime;
+        private int _leadTime;
 
         [Key]
-        public string ID
+        public string Id
         {
             get { return _id; }
             set
@@ -51,7 +51,7 @@ namespace TTools.Models
                 RaisePropertyChanged();
             }
         }
-        public string Price
+        public float Price
         {
             get { return _price; }
             set
@@ -71,7 +71,7 @@ namespace TTools.Models
                 RaisePropertyChanged();
             }
         }
-        public string Vender
+        public string VendorId
         {
             get { return _vendorId; }
             set
@@ -81,7 +81,7 @@ namespace TTools.Models
                 RaisePropertyChanged();
             }
         }
-        public float LeadTime
+        public int LeadTime
         {
             get { return _leadTime; }
             set
@@ -92,18 +92,14 @@ namespace TTools.Models
             }
         }
 
-
-        /// <summary>
-        /// フィルター条件を指定する際にforeachでプロパティを回す為。
-        /// </summary>
-        /// <returns></returns>
+        
         public IEnumerator GetEnumerator()
         {
-            yield return ID;
+            yield return Id;
             yield return Name;
             yield return Model;
             yield return Price;
-            yield return Vender;
+            yield return VendorId;
             yield return LeadTime;
         }
 

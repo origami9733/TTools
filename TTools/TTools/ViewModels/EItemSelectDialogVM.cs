@@ -3,24 +3,31 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
+using System.Windows.Input;
 using TTools.Domain;
 using TTools.EF;
 using TTools.Models;
-using Microsoft.VisualBasic;
-using Smart.Text.Japanese;
-using System.Diagnostics;
-using System.Windows.Input;
 
 namespace TTools.ViewModels
 {
     public class EItemSelectDialogVM : INotifyPropertyChanged
     {
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public EItemSelectDialogVM()
+        {
+            Load();
+        }
+
+        #region ローカル変数
         private TechnoDB context;
         private ICollectionView collectionView;
+        #endregion
 
+        #region プロパティ
         private DispatchObservableCollection<EItem> _eItems;
         public DispatchObservableCollection<EItem> EItems
         {
@@ -34,7 +41,7 @@ namespace TTools.ViewModels
         }
 
         private EItem _selectedEItem;
-        public EItem SelectedEitem
+        public EItem SelectedEItem
         {
             get { return _selectedEItem; }
             set
@@ -57,13 +64,12 @@ namespace TTools.ViewModels
                 SetFilter();
             }
         }
+        #endregion
 
-        public EItemSelectDialogVM()
-        {
-            Reload();
-        }
-
-        private async void Reload()
+        /// <summary>
+        /// ロード
+        /// </summary>
+        private async void Load()
         {
             await Task.Run(() =>
             {
@@ -74,43 +80,51 @@ namespace TTools.ViewModels
             collectionView = CollectionViewSource.GetDefaultView(EItems);
         }
 
-        private ICommand _eItemAddCommand;
-        public ICommand EItemAddCommand
+        /// <summary>
+        /// 自動採番した空のアイテムを追加する。
+        /// </summary>
+        private void AddNewEItem()
         {
-            get
-            {
-                if (_eItemAddCommand != null) return _eItemAddCommand;
-                _eItemAddCommand = new RelayCommand<object>(ExecuteEItemAddCommand);
-                return _eItemAddCommand;
-            }
-        }
-        public void ExecuteEItemAddCommand(object arg)
-        {
-            string id;
             using (TechnoDB newContext = new TechnoDB())
             {
-                id = newContext.EItems.Select(x => x.ID).Max();
+                string originalValue = newContext.EItems.Select(x => x.Id).Max();
+                int oldValue;
+                string newValue;
+                string fillStr;
+
+                if (originalValue == null)
+                {
+                    fillStr = "0000";
+                    newValue = "1";
+                }
+                else
+                {
+                    oldValue = int.Parse(originalValue);
+                    oldValue++;
+                    newValue = oldValue.ToString();
+
+                    fillStr = null;
+
+                    for (int i = 0; i < (5 - newValue.Length); i++)
+                    {
+                        fillStr = "0" + fillStr;
+                    }
+                }
+
+                var addItem = new EItem();
+                addItem.Id = fillStr + newValue;
+
+                context.EItems.Add(addItem);
+                context.SaveChanges();
+
+                SearchString = null;
+                Load();
             }
-            int id2 = int.Parse(id);
-            id2++;
-            id = id2.ToString();
-
-            string add0 = null;
-
-            for (int i = 0; i < (5 - id.Length); i++)
-            {
-                add0 = "0" + add0;
-            }
-
-            var item = new EItem();
-            item.ID = add0 + id;
-            context.EItems.Add(item);
-            SearchString = null;
-            context.SaveChanges();
-            Reload();
         }
 
-
+        /// <summary>
+        /// リアルタイムフィルター
+        /// </summary>
         private void SetFilter()
         {
             if (String.IsNullOrEmpty(SearchString) == true || string.IsNullOrWhiteSpace(SearchString) == true)
@@ -122,29 +136,33 @@ namespace TTools.ViewModels
                 collectionView.Filter += x =>
                 {
                     bool accept = false;
-                    var item = (EItem)x;
-                    List<string> strArray = new List<string>();
-                    List<string> dummyArray = null;
+                    var eItem = (EItem)x;
+
+                    List<string> searchWordArray = new List<string>();
+                    List<string> dummySearchWordArray = null;
 
                     if (SearchString != null)
                     {
-                        dummyArray = OriginalStringConverter.SearchWordConvert(SearchString).Split(new char[] { ' ', '　' }).ToList();
-                        //Nullと空と空白をリムーブ
-                        foreach (var a in dummyArray)
+                        //検索ワードを空白でスプリットしてダミー配列に格納
+                        dummySearchWordArray = OriginalStringConverter.SearchStringConvert(SearchString).Split(new char[] { ' ', '　' }).ToList();
+                        
+                        //ダミー配列から無駄な要素以外を正規配列に格納
+                        foreach (var a in dummySearchWordArray)
                         {
                             if (string.IsNullOrEmpty(a) != true || string.IsNullOrWhiteSpace(a) != true)
                             {
-                                strArray.Add(a);
+                                searchWordArray.Add(a);
                             }
                         }
 
-                        foreach (var searchStr in strArray)
+                        //検索ワード配列の文字列を含むアイテムのみ返す
+                        foreach (var searchWord in searchWordArray)
                         {
-                            foreach (var a in item)
+                            foreach (var a in eItem)
                             {
                                 if (a != null)
                                 {
-                                    if (OriginalStringConverter.SearchWordConvert(a.ToString()).Contains(searchStr))
+                                    if (OriginalStringConverter.SearchStringConvert(a.ToString()).Contains(searchWord))
                                     {
                                         accept = true;
                                         break;
@@ -161,6 +179,21 @@ namespace TTools.ViewModels
                     return accept;
                 };
             }
+        }
+
+        private ICommand _eItemAddCommand;
+        public ICommand EItemAddCommand
+        {
+            get
+            {
+                if (_eItemAddCommand != null) return _eItemAddCommand;
+                _eItemAddCommand = new RelayCommand<object>(ExecuteEItemAddCommand);
+                return _eItemAddCommand;
+            }
+        }
+        public void ExecuteEItemAddCommand(object arg)
+        {
+            AddNewEItem();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

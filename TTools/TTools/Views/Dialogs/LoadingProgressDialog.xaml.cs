@@ -2,9 +2,9 @@
 
 namespace TTools.Views
 {
-    public partial class SelectEItemDialog : UserControl
+    public partial class LoadingProgressDialog : UserControl
     {
-        public SelectEItemDialog()
+        public LoadingProgressDialog()
         {
             InitializeComponent();
         }

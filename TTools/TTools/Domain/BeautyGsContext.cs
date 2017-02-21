@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Data.SqlClient;
 using TTools.Properties;
 
 namespace TTools.Domain
@@ -12,7 +6,7 @@ namespace TTools.Domain
     public class BeautyGsContext
     {
         //Beauty社のDBから受注情報をロードする
-        public void Write(string sqlStr)
+        public void ExecuteSQL(string sqlStr)
         {
             //Setting読み込み
             string dbServer = Settings.Default.BeautyDbIP;

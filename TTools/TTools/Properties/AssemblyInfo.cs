@@ -10,7 +10,7 @@ using System.Windows;
 [assembly: AssemblyTitle("TTools")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Takeuchi-Techno")]
 [assembly: AssemblyProduct("TTools")]
 [assembly: AssemblyCopyright("Copyright ©  2016")]
 [assembly: AssemblyTrademark("")]
@@ -19,7 +19,7 @@ using System.Windows;
 // ComVisible を false に設定すると、このアセンブリ内の型は COM コンポーネントから
 // 参照できなくなります。COM からこのアセンブリ内の型にアクセスする必要がある場合は、
 // その型の ComVisible 属性を true に設定してください。
-[assembly: ComVisible(false)]
+[assembly: ComVisible(true)]
 
 //ローカライズ可能なアプリケーションのビルドを開始するには、
 //.csproj ファイルの <UICulture>CultureYouAreCodingWith</UICulture> を
@@ -53,3 +53,5 @@ using System.Windows;
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: NeutralResourcesLanguage("ja-JP")]
+

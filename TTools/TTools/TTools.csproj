@@ -73,6 +73,9 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>TTools.App</StartupObject>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
@@ -182,52 +185,52 @@
     <Compile Include="Domain\BeautyGhContext.cs" />
     <Compile Include="Domain\BeautyGsContext.cs" />
     <Compile Include="Domain\BindingProxy.cs" />
+    <Compile Include="Domain\Calendar.cs" />
     <Compile Include="Domain\DispatchObservableCollection.cs" />
     <Compile Include="Domain\DrivedObject.cs" />
     <Compile Include="Domain\TpicsDbContext.cs" />
+    <Compile Include="Models\DisplayOrderImportItem.cs" />
+    <Compile Include="Models\DisplayOrderManagementItem.cs" />
+    <Compile Include="Models\DisplayReplyManagementItem.cs" />
     <Compile Include="Models\EItem.cs" />
     <Compile Include="Models\OrderItem.cs" />
     <Compile Include="Models\ProductItem.cs" />
     <Compile Include="EF\TechnoDB.cs" />
-    <Compile Include="Document\JyuchuViewModel - コピー.cs" />
     <Compile Include="Models\Relationship.cs" />
-    <Compile Include="Models\StringConverter.cs" />
+    <Compile Include="Domain\OriginalStringConverter.cs" />
     <Compile Include="Models\VendorItem.cs" />
-    <Compile Include="Settings.cs" />
+    <Compile Include="Properties\Settings.cs" />
     <Compile Include="ViewModels\BsOrderManagementVM.cs" />
-    <Compile Include="ViewModels\EItemSekectDialogVM.cs" />
+    <Compile Include="ViewModels\EItemSelectDialogVM.cs" />
     <Compile Include="ViewModels\ImportOrdersVM.cs" />
     <Compile Include="ViewModels\MainWindowVM.cs" />
     <Compile Include="Domain\RelayCommand.cs" />
-    <Compile Include="ViewModels\OrderEditVM.cs" />
-    <Compile Include="Views\Dialogs\AcceptConfirmDialog.xaml.cs">
-      <DependentUpon>AcceptConfirmDialog.xaml</DependentUpon>
+    <Compile Include="ViewModels\BsReplyManagement.cs" />
+    <Compile Include="Views\Dialogs\YesConfirmDialog.xaml.cs">
+      <DependentUpon>YesConfirmDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Dialogs\EItemSelectDialog.xaml.cs">
       <DependentUpon>EItemSelectDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Dialogs\LoadingTimeMessageDialog.xaml.cs">
-      <DependentUpon>LoadingTimeMessageDialog.xaml</DependentUpon>
+    <Compile Include="Views\Dialogs\LoadingProgressDialog.xaml.cs">
+      <DependentUpon>LoadingProgressDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Dialogs\YorNConfirmWindow.xaml.cs">
-      <DependentUpon>YorNConfirmWindow.xaml</DependentUpon>
+    <Compile Include="Views\Dialogs\YesNoConfirmDialog.xaml.cs">
+      <DependentUpon>YesNoConfirmDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\OrderEdit.xaml.cs">
-      <DependentUpon>OrderEdit.xaml</DependentUpon>
+    <Compile Include="Views\BsReplyManagement.xaml.cs">
+      <DependentUpon>BsReplyManagement.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\OrdersManagement.xaml.cs">
-      <DependentUpon>OrdersManagement.xaml</DependentUpon>
+    <Compile Include="Views\BsOrderManagement.xaml.cs">
+      <DependentUpon>BsOrderManagement.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Information.xaml.cs">
       <DependentUpon>Information.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ImportOrders.xaml.cs">
-      <DependentUpon>ImportOrders.xaml</DependentUpon>
+    <Compile Include="Views\ImportOrder.xaml.cs">
+      <DependentUpon>ImportOrder.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\WaitingOrders.xaml.cs">
-      <DependentUpon>WaitingOrders.xaml</DependentUpon>
-    </Compile>
-    <Page Include="Views\Dialogs\AcceptConfirmDialog.xaml">
+    <Page Include="Views\Dialogs\YesConfirmDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -235,23 +238,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Dialogs\LoadingTimeMessageDialog.xaml">
+    <Page Include="Views\Dialogs\LoadingProgressDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Dialogs\DefaultMessageDialog.xaml">
+    <Page Include="Views\Dialogs\YesNoConfirmDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Dialogs\YorNConfirmWindow.xaml">
+    <Page Include="Views\BsReplyManagement.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\OrderEdit.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\OrdersManagement.xaml">
+    <Page Include="Views\BsOrderManagement.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -263,9 +262,6 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Views\Dialogs\DefaultMessageDialog.xaml.cs">
-      <DependentUpon>DefaultMessageDialog.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Domain\NotifyPropertyChangedExtension.cs" />
     <Compile Include="Models\SideMenuItem.cs" />
     <Compile Include="Views\MainWindow.xaml.cs">
@@ -276,11 +272,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\ImportOrders.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\WaitingOrders.xaml">
+    <Page Include="Views\ImportOrder.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -312,6 +304,5 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

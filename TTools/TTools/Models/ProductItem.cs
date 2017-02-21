@@ -6,23 +6,24 @@ namespace TTools.Models
 {
     public class ProductItem : INotifyPropertyChanged
     {
-        private string _productId;
+        private string _Id;
         private string _longName;
         private string _shortName;
         private string _aliasName;
-        private string _price;
+        private float _price;
         private string _category;
         private string _detail;
         private string _bluePrint;
+        private int _leadTime;
 
         [Key]
         public string ProductId
         {
-            get { return _productId; }
+            get { return _Id; }
             set
             {
-                if (_productId == value) return;
-                _productId = value;
+                if (_Id == value) return;
+                _Id = value;
                 RaisePropertyChanged();
             }
         }
@@ -56,7 +57,7 @@ namespace TTools.Models
                 RaisePropertyChanged();
             }
         }
-        public string Price
+        public float Price
         {
             get { return _price; }
             set
@@ -93,6 +94,16 @@ namespace TTools.Models
             {
                 if (_bluePrint == value) return;
                 _bluePrint = value;
+                RaisePropertyChanged();
+            }
+        }
+        public int LeadTime
+        {
+            get { return _leadTime; }
+            set
+            {
+                if (_leadTime == value) return;
+                _leadTime = value;
                 RaisePropertyChanged();
             }
         }
