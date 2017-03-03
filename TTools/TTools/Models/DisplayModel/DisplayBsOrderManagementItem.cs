@@ -1,16 +1,16 @@
-﻿using System.ComponentModel;
+﻿using System.Collections;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
 namespace TTools.Models
 {
-    public class DisplayReplyManagementItem : INotifyPropertyChanged
+    public class DisplayBsOrderManagementItem : INotifyPropertyChanged, IEnumerable
     {
         private OrderItem _orderItem;
         private ProductItem _productItem;
         private RelationItem _relationItem;
         private EItem _eItem;
         private VendorItem _vendorItem;
-        private string _replyDate;
 
         public OrderItem OrderItem
         {
@@ -62,17 +62,14 @@ namespace TTools.Models
                 RaisePropertyChanged();
             }
         }
-        public string ReplyDate
-        {
-            get { return _replyDate; }
-            set
-            {
-                if (_replyDate == value) return;
-                _replyDate = value;
-                RaisePropertyChanged();
-            }
-        }
 
+        public IEnumerator GetEnumerator()
+        {
+            yield return OrderItem;
+            yield return ProductItem;
+            yield return RelationItem;
+            yield return EItem;
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
         public void RaisePropertyChanged([CallerMemberName]string propertyName = "")

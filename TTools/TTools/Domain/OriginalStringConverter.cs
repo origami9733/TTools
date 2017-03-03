@@ -50,6 +50,8 @@ namespace TTools.Models
                 }
             }
 
+            returnStr = returnStr.TrimStart();
+
             return returnStr;
         }
     }

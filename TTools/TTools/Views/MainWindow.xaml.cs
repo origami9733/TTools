@@ -9,27 +9,25 @@ namespace TTools.Views
 {
     public partial class MainWindow : Window
     {
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
         public MainWindow()
         {
-            InitializeComponent();
             DataContext = new MainWindowVM();
+            InitializeComponent();
         }
 
         private void UIElement_OnPreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            var dependencyObject = Mouse.Captured as DependencyObject;
-            while (dependencyObject != null)
-            {
-                if (dependencyObject is ScrollBar) return;
-                dependencyObject = VisualTreeHelper.GetParent(dependencyObject);
-            }
+            //var dependencyObject = Mouse.Captured as DependencyObject;
+            //while (dependencyObject != null)
+            //{
+            //    if (dependencyObject is ScrollBar) return;
+            //    dependencyObject = VisualTreeHelper.GetParent(dependencyObject);
+            //}
 
             MenuToggleButton.IsChecked = false;
-        }
-
-        private void MenuPopupButton_OnClick_Async(object sender, RoutedEventArgs e)
-        {
-
         }
     }
 }

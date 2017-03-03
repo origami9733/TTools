@@ -23,14 +23,14 @@
 
             <Button Grid.Column="0" x:Name="AcceptBT"
                     IsDefault="True" 
-                    Style="{DynamicResource MaterialDesignFlatButton}"
                     HorizontalAlignment="Center"
+                    Style="{DynamicResource MaterialDesignFlatButton}"
                     Margin="16 16 16 0">
                 ACCEPT
             </Button>
             <Button Grid.Column="1" x:Name="CancelBT" IsDefault="True" 
-                    Style="{DynamicResource MaterialDesignFlatButton}"
                     HorizontalAlignment="Center"
+                    Style="{DynamicResource MaterialDesignFlatButton}"
                     Margin="16 16 16 0">
                 CANCEL
             </Button>

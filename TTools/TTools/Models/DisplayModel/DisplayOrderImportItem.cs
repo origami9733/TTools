@@ -6,8 +6,6 @@ namespace TTools.Models
     public class DisplayOrderImportItem : INotifyPropertyChanged
     {
         private bool _isChecked;
-        private OrderItem _orderItem;
-
         public bool IsChecked
         {
             get { return _isChecked; }
@@ -18,6 +16,7 @@ namespace TTools.Models
                 RaisePropertyChanged();
             }
         }
+        private OrderItem _orderItem;
         public OrderItem OrderItem
         {
             get { return _orderItem; }

@@ -4,17 +4,17 @@
 winexe
 C#
 .cs
-C:\Users\tmiy0435\Documents\Visual Studio 2017\Projects\TTools\TTools\obj\Release\
+C:\Users\tmiy0435\Source\Repos\TTools\TTools\TTools\obj\Release\
 TTools
 none
 false
 TRACE
-C:\Users\tmiy0435\Documents\Visual Studio 2017\Projects\TTools\TTools\App.xaml
-71515015278
+C:\Users\tmiy0435\Source\Repos\TTools\TTools\TTools\App.xaml
+111099715432
 
-29-1692229886
-9015993813
-Domain\MessageDialog.xaml;MainWindow.xaml;Views\HomeView.xaml;Views\OrderImportView.xaml;Views\ProductCodeMasterView.xaml;Views\OrderMasterView.xaml;Views\TestView.xaml;
+52-1763439827
+92-1637782178
+Views\Dialogs\YesConfirmDialog.xaml;Views\Dialogs\EItemSelectDialog.xaml;Views\Dialogs\LoadingProgressDialog.xaml;Views\Dialogs\YesNoConfirmDialog.xaml;Views\BsReplyManagement.xaml;Views\BsOrderManagement.xaml;Views\InspectionDataIO.xaml;Views\MachineOrderManagement.xaml;Views\MainWindow.xaml;Views\Information.xaml;Views\ImportOrder.xaml;
 
 True
 

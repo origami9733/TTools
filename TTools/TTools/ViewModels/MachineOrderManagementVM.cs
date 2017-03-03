@@ -1,11 +1,11 @@
 ﻿using MaterialDesignThemes.Wpf;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Deployment.Application;
-using System.Reflection;
+using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
+using System.Windows.Data;
 using System.Windows.Input;
 using TTools.Domain;
 using TTools.EF;
@@ -14,7 +14,7 @@ using TTools.Views;
 
 namespace TTools.ViewModels
 {
-    public class MainWindowVM : INotifyPropertyChanged
+    public class MachineOrderManagementVM : INotifyPropertyChanged, INotifyDataErrorInfo
     {
         #region プロパティ変更通知インターフェース
         public event PropertyChangedEventHandler PropertyChanged;
@@ -132,17 +132,30 @@ namespace TTools.ViewModels
         #endregion
 
         #region ローカル変数
-        private int _selectedSideMenuIndex;
+        private MainWindowVM masterVM;
+        private TechnoDB context;
+        private ICollectionView collectionView;
         #endregion
 
-        public SideMenuItem[] SideMenuItems { get; }
-        public int SelectedSideMenuIndex
+        private object _selectedRowItem;
+        public object SelectedRowItem
         {
-            get { return _selectedSideMenuIndex; }
+            get { return _selectedRowItem; }
             set
             {
-                if (_selectedSideMenuIndex == value) return;
-                _selectedSideMenuIndex = value;
+                if (_selectedRowItem == value) return;
+                _selectedRowItem = value;
+                RaisePropertyChanged();
+            }
+        }
+        private DispatchObservableCollection<DisplayMachineOrderManagementItem> _displayItems;
+        public DispatchObservableCollection<DisplayMachineOrderManagementItem> DisplayItems
+        {
+            get { return _displayItems; }
+            set
+            {
+                if (_displayItems == value) return;
+                _displayItems = value;
                 RaisePropertyChanged();
             }
         }
@@ -151,51 +164,60 @@ namespace TTools.ViewModels
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public MainWindowVM()
+        /// <param name="arg"></param>
+        public MachineOrderManagementVM(MainWindowVM arg)
         {
-            _selectedSideMenuIndex = 0;
-            SideMenuItems = new[]
+            masterVM = arg;
+        }
+        /// <summary>
+        /// ロード
+        /// </summary>
+        public async void Load()
+        {
+            context = new TechnoDB();
+            context.OrderItems.ToList();
+            context.ProductItems.ToList();
+            DisplayItems = new DispatchObservableCollection<DisplayMachineOrderManagementItem>();
+            BindingOperations.EnableCollectionSynchronization(DisplayItems, new object());
+
+            var dialog = new LoadingProgressDialog();
+            DialogContent = dialog;
+            IsDialogOpen = true;
+
+            await Task.Run(() =>
             {
-                new SideMenuItem("インフォメーション",new Information()),
-                new SideMenuItem("受注インポート",new ImportOrder(){DataContext = new ImportOrderVM(this) }),
-                new SideMenuItem("BS受注管理",new BsOrdersManagement(){DataContext = new BsOrderManagementVM(this) }),
-                new SideMenuItem("BS回答管理",new BsReplyManagement(){DataContext = new BsReplyManagementVM(this) }),
-                new SideMenuItem("検収データI/O",new InspectionDataIO(){DataContext = new InspectionDataIOVM(this) }),
-                new SideMenuItem("本体受注管理",new MachineOrderManagement(){DataContext = new MachineOrderManagementVM(this)}),
-            };
+                foreach (var oItem in context.OrderItems.Where(x => x.フラグ１ == " " && x.OrderStatus == null))
+                {
+                    var pItem = context.ProductItems.Where(x => x.ProductId == oItem.商品コード)?.First();
+
+                    var addItem = new DisplayMachineOrderManagementItem();
+                    addItem.OrderItem = oItem;
+                    addItem.ProductItem = pItem;
+
+                    DisplayItems.Add(addItem);
+                }
+            });
+
+            collectionView = CollectionViewSource.GetDefaultView(DisplayItems);
+            collectionView.SortDescriptions.Add(new SortDescription("OrderItem.契約番号", ListSortDirection.Ascending));
+            collectionView.GroupDescriptions.Add(new PropertyGroupDescription("OrderItem.契約番号"));
+            IsDialogOpen = false;
         }
 
 
-        
-        private ICommand _openVersionConfirmDialogCommand;
-        public ICommand OpenVersionConfirmDialogCommand
+        private ICommand _loadCommand;
+        public ICommand LoadCommand
         {
             get
             {
-                if (_openVersionConfirmDialogCommand != null) return _openVersionConfirmDialogCommand;
-                _openVersionConfirmDialogCommand = new RelayCommand<object>(ExecuteOpenVersionConfirmDialogCommand);
-                return _openVersionConfirmDialogCommand;
+                if (_loadCommand != null) return _loadCommand;
+                _loadCommand = new RelayCommand<object>(ExecuteLoadCommand);
+                return _loadCommand;
             }
         }
-        public void ExecuteOpenVersionConfirmDialogCommand(object arg)
+        public void ExecuteLoadCommand(object arg)
         {
-            string ver = "Debug Mode";
-            string update_date = "----/--/--";
-
-            if (ApplicationDeployment.IsNetworkDeployed)
-            {
-                ApplicationDeployment ad = ApplicationDeployment.CurrentDeployment;
-                //**バージョン取得
-                ver = "v" + ad.CurrentVersion.ToString();
-                //**最終更新日取得
-                update_date = ad.TimeOfLastUpdateCheck.ToString("yyyy/MM/dd");
-            }
-            var dialog = new YesConfirmDialog();
-
-            dialog.Message.Text = ver + "\r\n" + update_date ;
-            dialog.AcceptBT.Click += (x, y) => { IsDialogOpen = false; };
-            DialogContent = dialog;
-            IsDialogOpen = true;
+            Load();
         }
     }
 }

@@ -73,7 +73,6 @@ namespace TTools.Models
         private string _receivedDate;
 
         #endregion
-
         #region プロパティ
         [Key]
         public string 伝票ＮＯ
@@ -807,8 +806,6 @@ namespace TTools.Models
             }
         }
         #endregion
-
-
 
         public IEnumerator GetEnumerator()
         {

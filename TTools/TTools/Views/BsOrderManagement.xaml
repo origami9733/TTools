@@ -14,8 +14,8 @@
     </UserControl.Resources>
 
     <m:DialogHost IsOpen="{Binding IsDialogOpen}" DialogContent="{Binding DialogContent}" CloseOnClickAway="False">
-        <Grid>
-            <Grid Margin="10 15 15 20">
+        <Grid x:Name="OuterLayer">
+            <Grid x:Name="InnerLayer" Margin="10 15 15 20">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
@@ -23,13 +23,17 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="AUTO"/>
                 </Grid.ColumnDefinitions>
-                
-                <DataGrid Grid.Column="0" x:Name="DG1" HorizontalAlignment="Left" VerticalAlignment="Top"
-                          ItemsSource="{Binding Path=DisplayOrderManagementItems,UpdateSourceTrigger=PropertyChanged}"
+
+                <DataGrid x:Name="DG1" Grid.Row="0" Grid.Column="0"
+                          HorizontalAlignment="Left" VerticalAlignment="Top"
+                          ItemsSource="{Binding Path=DisplayItems,UpdateSourceTrigger=PropertyChanged}"
                           SelectedItem="{Binding SelectedRowItem}"
-                          AutoGenerateColumns="False" EnableRowVirtualization="True"
+                          AutoGenerateColumns="False"
                           CanUserSortColumns="True" CanUserAddRows="False"
-                          m:DataGridAssist.CellPadding="13 8 8 8" m:DataGridAssist.ColumnHeaderPadding="8">
+                          m:DataGridAssist.CellPadding="13 8 8 8" m:DataGridAssist.ColumnHeaderPadding="8"
+                          VirtualizingPanel.IsVirtualizing="True"
+                          VirtualizingPanel.IsVirtualizingWhenGrouping="True"
+                          VirtualizingPanel.VirtualizationMode="Recycling">
                     <DataGrid.Resources>
                         <domain:BindingProxy x:Key="Proxy" Data="{Binding}"/>
                     </DataGrid.Resources>
@@ -43,21 +47,190 @@
                                             <ControlTemplate TargetType="{x:Type GroupItem}">
                                                 <Expander IsExpanded="True">
                                                     <Expander.Header>
-                                                        <Grid>
+                                                        <Grid ShowGridLines="False">
                                                             <Grid.RowDefinitions>
-                                                                <RowDefinition Height="AUTO"/>
-                                                                <RowDefinition Height="AUTO"/>
-                                                                <RowDefinition Height="AUTO"/>
+                                                                <RowDefinition Height="70"/>
+                                                                <RowDefinition Height="70"/>
+                                                                <RowDefinition Height="90"/>
+                                                                <RowDefinition Height="50"/>
                                                             </Grid.RowDefinitions>
                                                             <Grid.ColumnDefinitions>
-                                                                <ColumnDefinition Width="AUTO"/>
-                                                                <ColumnDefinition Width="90"/>
-                                                                <ColumnDefinition Width="85"/>
+                                                                <ColumnDefinition Width="335"/>
+                                                                <ColumnDefinition Width="1000"/>
                                                             </Grid.ColumnDefinitions>
 
-                                                            <StackPanel Grid.Row="0" Grid.Column="0" Grid.RowSpan="3" Orientation="Horizontal" 
+                                                            <!--#region 注文番号-->
+                                                            <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal"
                                                                         VerticalAlignment="Center" HorizontalAlignment="Left">
-                                                                <Button Width="25" Height="25" Margin="-10 0 11 0" FontSize="12"
+                                                                <TextBlock Text="{Binding Items[0].OrderItem.伝票ＮＯ}" FontSize="30" FontWeight="Light"
+                                                                           VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                                            </StackPanel>
+                                                            <!--#endregion-->
+                                                            <!--#region 商品名称-->
+                                                            <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Vertical"
+                                                                        VerticalAlignment="Center" HorizontalAlignment="Left">
+                                                                <StackPanel Orientation="Horizontal">
+                                                                    <TextBlock Text="➡" Margin="0 0 12 0" FontSize="20" Foreground="Aqua" Opacity="1"
+                                                                               VerticalAlignment="Center"/>
+                                                                    <TextBlock Text="{Binding Items[0].OrderItem.商品名}" FontSize="28" FontWeight="UltraLight"
+                                                                               VerticalAlignment="Center"/>
+                                                                </StackPanel>
+                                                                <Separator Opacity="0.6"/>
+                                                            </StackPanel>
+                                                            <!--#endregion-->
+                                                            <!--#region 注文詳細-->
+                                                            <StackPanel Grid.Row="1" Grid.Column="0" Margin="-6 0 0 0" Orientation="Horizontal"
+                                                                        VerticalAlignment="Center" HorizontalAlignment="Left">
+                                                                <StackPanel Orientation="Vertical">
+                                                                    <StackPanel Orientation="Horizontal" Margin="0 0 20 0">
+                                                                        <TextBlock Text="➡商品コード：" Margin="5 0 0 0" Opacity="0.5" FontSize="14"
+                                                                                   VerticalAlignment="Center"/>
+                                                                        <TextBlock Text="{Binding Items[0].ProductItem.ProductId}" Margin="2 0 0 0"
+                                                                                   Opacity="1" FontSize="14" FontWeight="Light" Foreground="Aqua" 
+                                                                                   VerticalAlignment="Center"/>
+                                                                    </StackPanel>
+                                                                    <StackPanel Orientation="Horizontal" Margin="0 8 0 0">
+                                                                        <TextBlock Text="➡連絡事項：" Margin="5 0 0 0" Opacity="0.5" FontSize="14"
+                                                                                   VerticalAlignment="Center"/>
+                                                                        <TextBlock Text="{Binding Items[0].OrderItem.発注連絡事項}" Margin="2 0 0 0"
+                                                                                   Opacity="1" FontSize="13" FontWeight="Light" Foreground="Aqua" 
+                                                                                   VerticalAlignment="Center"/>
+                                                                    </StackPanel>
+                                                                </StackPanel>
+
+                                                                <StackPanel Orientation="Vertical">
+                                                                    <StackPanel Orientation="Horizontal" Margin="0 0 20 0">
+                                                                        <TextBlock Text="➡図番：" Margin="5 0 0 0" Opacity="0.5" FontSize="14"/>
+                                                                        <TextBlock Text="{Binding Items[0].OrderItem.業者図番}" Margin="2 0 0 0"
+                                                                                   Opacity="1" FontSize="13" FontWeight="Light" Foreground="Aqua"
+                                                                                   VerticalAlignment="Center"/>
+                                                                    </StackPanel>
+                                                                    <StackPanel Orientation="Horizontal" Margin="0 8 0 0">
+                                                                        <TextBlock Text="➡数量：" Margin="5 0 0 0" Opacity="0.5" FontSize="14"
+                                                                                   VerticalAlignment="Center"/>
+                                                                        <TextBlock Text="{Binding Items[0].OrderItem.発注数量}" Margin="2 0 0 0"
+                                                                                   Opacity="1" FontSize="13" FontWeight="Light" Foreground="Aqua"
+                                                                                   VerticalAlignment="Center"/>
+                                                                    </StackPanel>
+                                                                </StackPanel>
+                                                            </StackPanel>
+                                                            <!--#endregion-->
+                                                            <!--#region 商品詳細-->
+                                                            <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Vertical"
+                                                                        VerticalAlignment="Center" HorizontalAlignment="Left">
+                                                                <StackPanel Orientation="Vertical" Margin="15 0 0 0">
+                                                                    <StackPanel Orientation="Horizontal" Margin="0 0 0 0">
+                                                                        <TextBlock Text="{Binding Items[0].OrderItem.仕様_備考}"
+                                                                                   Opacity="1" FontSize="16" FontWeight="Medium"/>
+                                                                    </StackPanel>
+                                                                    <StackPanel Orientation="Horizontal" Margin="0 4 0 0">
+                                                                        <TextBlock Text="{Binding Items[0].OrderItem.業者連絡事項}" 
+                                                                                   Opacity="1" FontSize="16" FontWeight="Medium"/>
+                                                                    </StackPanel>
+                                                                </StackPanel>
+                                                            </StackPanel>
+                                                            <!--#endregion-->
+                                                            <!--#region 物流情報-->
+                                                            <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
+                                                                        VerticalAlignment="Center" HorizontalAlignment="Left">
+                                                                <StackPanel Orientation="Horizontal">
+                                                                    <!--発注元-->
+                                                                    <Border BorderThickness="0.8" BorderBrush="Gray">
+                                                                        <StackPanel Margin="10 6 20 6" VerticalAlignment="Center">
+                                                                            <StackPanel Orientation="Horizontal">
+                                                                                <m:PackIcon Kind="CalendarCheck" Margin="0 0 9 0" Width="15" Height="15"
+                                                                                            VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                                                                <TextBlock Text="{Binding Items[0].OrderItem.物流発注年月日}" Opacity="1" FontSize="13.5"
+                                                                                           VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                                                            </StackPanel>
+                                                                            <StackPanel Orientation="Horizontal" Margin="0 3 0 0">
+                                                                                <m:PackIcon Kind="Account" Margin="0 0 9 0" Width="15" Height="15"
+                                                                                            VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                                                                <TextBlock Text="{Binding Items[0].OrderItem.営業所名}" Opacity="1" FontSize="13.5"
+                                                                                           VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                                                            </StackPanel>
+                                                                            <StackPanel Orientation="Horizontal" Margin="0 3 0 0">
+                                                                                <m:PackIcon Kind="Phone" Margin="0 0 9 0" Width="15" Height="15"
+                                                                                            VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                                                                <TextBlock Text="{Binding Items[0].OrderItem.営業所電話番号}" Opacity="1" FontSize="13.5"
+                                                                                           VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                                                            </StackPanel>
+                                                                        </StackPanel>
+                                                                    </Border>
+                                                                    <m:PackIcon Kind="Transfer" Margin="15 0 15 0" Width="24" Height="24" Opacity="0.3"
+                                                                                VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                                                    <!--発注先-->
+                                                                    <Border BorderThickness="1.3" BorderBrush="Aqua">
+                                                                        <StackPanel Margin="10 6 20 6" VerticalAlignment="Center">
+                                                                            <StackPanel Orientation="Horizontal">
+                                                                                <m:PackIcon Kind="CalendarCheck" Margin="0 0 9 0" Width="15" Height="15"
+                                                                                            VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                                                                <TextBlock Text="{Binding Items[0].OrderItem.ReceivedDate}" Opacity="1" FontSize="13.5"
+                                                                                           VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                                                            </StackPanel>
+                                                                            <StackPanel Orientation="Horizontal" Margin="0 3 0 0">
+                                                                                <m:PackIcon Kind="Account" Margin="0 0 9 0" Width="15" Height="15"
+                                                                                            VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                                                                <TextBlock Text="{Binding Items[0].OrderItem.発注先名称}" Opacity="1" FontSize="13.5"
+                                                                                           VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                                                            </StackPanel>
+                                                                        </StackPanel>
+                                                                    </Border>
+                                                                    <m:PackIcon Kind="Transfer" Margin="15 0 15 0" Width="24" Height="24" Opacity="1" Foreground="Aqua"
+                                                                                VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                                                    <!--納品先-->
+                                                                    <Border BorderThickness="0.8" BorderBrush="Gray">
+                                                                        <StackPanel Margin="10 6 20 6" VerticalAlignment="Center">
+                                                                            <StackPanel Orientation="Horizontal">
+                                                                                <m:PackIcon Kind="CalendarCheck" Margin="0 0 9 0" Width="15" Height="15"
+                                                                                            VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                                                                <TextBlock Text="{Binding Items[0].OrderItem.ReplyDate}" Opacity="1" FontSize="13.5"
+                                                                                           VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                                                            </StackPanel>
+                                                                            <StackPanel Orientation="Horizontal" Margin="0 3 0 0">
+                                                                                <m:PackIcon Kind="Account" Margin="0 0 9 0" Width="15" Height="15"
+                                                                                            VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                                                                <TextBlock Text="{Binding Items[0].OrderItem.納入先名称}" Opacity="1" FontSize="13.5"
+                                                                                           VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                                                                <TextBlock Text="{Binding Items[0].OrderItem.納入先ＳＳ名称}" Opacity="1" FontSize="13.5"
+                                                                                           Margin="10 0 0 0"/>
+                                                                            </StackPanel>
+                                                                            <StackPanel Orientation="Horizontal" Margin="0 3 0 0">
+                                                                                <m:PackIcon Kind="Phone" Margin="0 0 9 0" Width="15" Height="15"
+                                                                                            VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                                                                <TextBlock Text="{Binding Items[0].OrderItem.納入先電話番号}" Opacity="1" FontSize="13.5"
+                                                                                           VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                                                            </StackPanel>
+                                                                        </StackPanel>
+                                                                    </Border>
+                                                                    <m:PackIcon Kind="CubeSend" Margin="15 0 15 0"
+                                                                                Width="25" Height="25" Opacity="1"
+                                                                                VerticalAlignment="Center" HorizontalAlignment="Center"/>
+
+                                                                    <!--納品先住所-->
+                                                                    <Border BorderThickness="0.8" BorderBrush="Gray">
+                                                                        <StackPanel Margin="10 6 20 6" VerticalAlignment="Center">
+                                                                            <StackPanel Orientation="Horizontal" Margin="5 2 5 0">
+                                                                                <TextBlock Text="〒" Opacity="1" FontSize="13.5" FontWeight="Bold"
+                                                                                           Margin="0 0 9 0"/>
+                                                                                <TextBlock Text="{Binding Items[0].OrderItem.納入先郵便番号}" Opacity="1" FontSize="13.5"/>
+                                                                            </StackPanel>
+                                                                            <StackPanel Orientation="Horizontal" Margin="5 2 5 0.7">
+                                                                                <TextBlock Text="{Binding Items[0].OrderItem.納入先住所_市町村名}" Opacity="1" FontSize="13.5"/>
+                                                                                <TextBlock Margin="10 0 0 0"
+                                                                                           Text="{Binding Items[0].OrderItem.納入先住所_番地}" Opacity="1" FontSize="13.5"/>
+                                                                            </StackPanel>
+                                                                        </StackPanel>
+                                                                    </Border>
+                                                                </StackPanel>
+                                                            </StackPanel>
+                                                            <!--#endregion-->
+
+                                                            <!--#region ボタン-->
+                                                            <StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" 
+                                                                        Orientation="Horizontal" Margin="0 10 0 0"
+                                                                        VerticalAlignment="Center" HorizontalAlignment="Left">
+                                                                <Button Width="25" Height="25" Margin="0 0 11 0" FontSize="12"
                                                                         VerticalAlignment="Center" HorizontalAlignment="Left"
                                                                         Command="{Binding Data.GroupHeaderAddEItemCommand,UpdateSourceTrigger=PropertyChanged,Source={StaticResource Proxy}}"
                                                                         CommandParameter="{Binding Items}"
@@ -79,35 +252,7 @@
                                                                     <m:PackIcon Kind="Refresh" />
                                                                 </Button>
                                                             </StackPanel>
-
-                                                            <Expander Grid.Row="0" Grid.Column="4" Grid.RowSpan="3" 
-                                                                      ExpandDirection="Down" VerticalAlignment="Top" Margin="0 -12 0 0"
-                                                                      VerticalContentAlignment="Top">
-                                                                <Expander.Header>
-                                                                    <TextBlock Text="Test1" RenderTransformOrigin=".5,.5">
-                                                                    </TextBlock>
-                                                                </Expander.Header>
-                                                                <StackPanel Orientation="Vertical"
-                                                                            TextBlock.Foreground="{DynamicResource MaterialDesignBody}">
-                                                                    <TextBlock Opacity=".68" Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit,"
-                                                                               MaxWidth="180"
-                                                                               TextWrapping="Wrap"/>
-
-                                                                    <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Items[0].OrderItem.伝票ＮＯ}" FontSize="12"/>
-                                                                    <TextBlock Grid.Row="1" Grid.Column="1" Margin="0 0 10 0" Text="{Binding Items[0].ProductItem.ProductId}"/>
-                                                                    <TextBlock Grid.Row="2" Grid.Column="1" Margin="0 0 10 0" Text="{Binding Items[0].OrderItem.発注数量}"/>
-
-                                                                    <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding Items[0].OrderItem.営業所名}" FontSize="12"/>
-                                                                    <TextBlock Grid.Row="1" Grid.Column="2" Margin="0 0 10 0" Text="{Binding Items[0].OrderItem.営業所電話番号}"/>
-                                                                    <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding Items[0].OrderItem.物流発注年月日}" FontSize="12"/>
-
-                                                                    <TextBlock Grid.Row="0" Grid.Column="3" Text="{Binding Items[0].OrderItem.商品名}" FontSize="12"/>
-                                                                    <TextBlock Grid.Row="1" Grid.Column="3" Margin="0 0 10 0" Text="{Binding Items[0].OrderItem.業者連絡事項}"/>
-                                                                    <TextBlock Grid.Row="2" Grid.Column="3" Text="{Binding Items[0].OrderItem.業者図番}" FontSize="12"/>
-
-                                                                </StackPanel>
-                                                            </Expander>
-
+                                                            <!--#endregion-->
                                                         </Grid>
                                                     </Expander.Header>
                                                     <Expander.Content>
@@ -121,42 +266,50 @@
                             </GroupStyle.ContainerStyle>
                         </GroupStyle>
                     </DataGrid.GroupStyle>
-                    
+
                     <DataGrid.Columns>
-                        <m:MaterialDataGridTextColumn Header="ProductID" Binding="{Binding OrderItem.商品コード}"
-                                                      MaxLength="20" FontSize="12" IsReadOnly="True"
-                                                      Visibility="{Binding Data.IsVisible商品コード,Converter={StaticResource BoolToVisible},UpdateSourceTrigger=PropertyChanged,Source={StaticResource Proxy}}"
+                        <m:MaterialDataGridTextColumn Header="ItemID" FontSize="12" MaxLength="10" IsReadOnly="True" 
+                                                      Binding="{Binding OrderItem.伝票ＮＯ}"
                                                       EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" />
-                        <m:MaterialDataGridTextColumn Header="ID" Binding="{Binding RelationItem.EItemId}" 
-                                                      MaxLength="10" FontSize="12" IsReadOnly="True"
+
+                        <m:MaterialDataGridTextColumn Header="名称" FontSize="12" MaxLength="100" 
+                                                      Binding="{Binding EItem.Name}"
                                                       EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" />
-                        <m:MaterialDataGridTextColumn Header="Name" Binding="{Binding EItem.Name,UpdateSourceTrigger=LostFocus,Mode=TwoWay}"
-                                                      MaxLength="100" FontSize="12"
+
+                        <m:MaterialDataGridTextColumn Header="型式" FontSize="12" MaxLength="100"
+                                                      Binding="{Binding EItem.Model}"
                                                       EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" />
-                        <m:MaterialDataGridTextColumn Header="Model" Binding="{Binding EItem.Model}"
-                                                      MaxLength="100" FontSize="12"
+
+                        <m:MaterialDataGridTextColumn Header="単価" FontSize="12" MaxLength="10"
+                                                      Binding="{Binding EItem.Price}"
                                                       EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" />
-                        <m:MaterialDataGridTextColumn Header="Price" Binding="{Binding EItem.Price}"
-                                                      MaxLength="10" FontSize="12"
+
+                        <m:MaterialDataGridTextColumn Header="数量" FontSize="12" MaxLength="5"
+                                                      Binding="{Binding RelationItem.Amount}"
                                                       EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" />
-                        <m:MaterialDataGridTextColumn Header="Amount" Binding="{Binding RelationItem.Amount}"
-                                                      MaxLength="5" FontSize="12"
+
+                        <m:MaterialDataGridTextColumn Header="リードタイム" FontSize="12" MaxLength="5"
+                                                      Binding="{Binding EItem.LeadTime}"
                                                       EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" />
-                        <m:MaterialDataGridTextColumn Header="VendorID" Binding="{Binding EItem.Vender}"
-                                                      MaxLength="12" FontSize="12"
+
+                        <m:MaterialDataGridTextColumn Header="取引先ID" FontSize="12" MaxLength="12"
+                                                      Binding="{Binding EItem.VendorId}"
+                                                      EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}"/>
+
+                        <m:MaterialDataGridTextColumn Header="取引先名" FontSize="12" MaxLength="50" IsReadOnly="True"
+                                                      Binding="{Binding VendorItem.Name}"
                                                       EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" />
-                        <m:MaterialDataGridTextColumn Header="VendorName" Binding="{Binding VendorItem.Name}"
-                                                      MaxLength="50" FontSize="12" IsReadOnly="True"
-                                                      EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" />
-                        <m:MaterialDataGridTextColumn Header="Mail" Binding="{Binding VendorItem.Mail}"
-                                                      MaxLength="50" FontSize="12" IsReadOnly="True"
+
+                        <m:MaterialDataGridTextColumn Header="メール" FontSize="12" MaxLength="50" IsReadOnly="True"
+                                                      Binding="{Binding VendorItem.Mail}"
                                                       EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" />
                     </DataGrid.Columns>
-
                 </DataGrid>
-                <StackPanel Grid.Column="1">
-                    <Button Command="{Binding LoadCommand}" Content="Load"/>
-                    <Button Margin="0 10 0 0" Command="{Binding SelectedRelationDeleteCommand}" Content="Delete"/>
+                
+                <StackPanel Grid.Row="0" Grid.Column="1">
+                    <Button Command="{Binding LoadCommand}">Load</Button>
+                    <Button Margin="0 10 0 0" 
+                            Command="{Binding SelectedRelationDeleteCommand}">Delete</Button>
                 </StackPanel>
             </Grid>
         </Grid>

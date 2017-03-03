@@ -1,4 +1,5 @@
 ﻿using System.Data.SqlClient;
+using System.Diagnostics;
 using TTools.Properties;
 
 namespace TTools.Domain
@@ -27,6 +28,9 @@ namespace TTools.Domain
                 connection.Open();
 
                 command.CommandText = sqlStr;
+                Debug.WriteLine(sqlStr);
+
+                if (Settings.Default.DebugMode == true) return;
                 command.ExecuteNonQuery();
             }
         }

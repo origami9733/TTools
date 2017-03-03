@@ -12,7 +12,8 @@
         TextElement.FontWeight="Regular" TextElement.FontSize="13"
         TextOptions.TextFormattingMode="Ideal" TextOptions.TextRenderingMode="Aliased"        
         Background="{DynamicResource MaterialDesignPaper}">
-    <m:DialogHost Identifier="RootDialog">
+
+    <m:DialogHost IsOpen="{Binding IsDialogOpen}" DialogContent="{Binding DialogContent}" CloseOnClickAway="False" >
         <m:DrawerHost IsLeftDrawerOpen="{Binding ElementName=MenuToggleButton,Path=IsChecked}">
             <m:DrawerHost.LeftDrawerContent>
                 <DockPanel MinWidth="212">
@@ -20,7 +21,8 @@
                                   DockPanel.Dock="Top"
                                   HorizontalAlignment="Right" Margin="16"
                                   IsChecked="{Binding ElementName=MenuToggleButton,Path=IsChecked,Mode=TwoWay}"/>
-                    <ListBox x:Name="SideMenuItemsListBox" Margin="0 16 0 16" SelectedIndex="{Binding SelectedSideMenuIndex}"
+                    <ListBox x:Name="SideMenuItemsListBox" Margin="0 16 0 16" 
+                             SelectedIndex="{Binding SelectedSideMenuIndex}"
                              ItemsSource="{Binding SideMenuItems}"
                              PreviewMouseLeftButtonUp="UIElement_OnPreviewMouseLeftButtonUp">
                         <ListBox.ItemTemplate>
@@ -33,22 +35,20 @@
             </m:DrawerHost.LeftDrawerContent>
 
             <DockPanel>
-                <m:ColorZone Padding="16" m:ShadowAssist.ShadowDepth="Depth2"
-                                          Mode="PrimaryMid" DockPanel.Dock="Top">
+                <m:ColorZone Padding="16" m:ShadowAssist.ShadowDepth="Depth2" Mode="PrimaryMid" DockPanel.Dock="Top">
                     <DockPanel>
-                        <ToggleButton Style="{StaticResource MaterialDesignHamburgerToggleButton}" IsChecked="False"
-                                      x:Name="MenuToggleButton"/>
+                        <ToggleButton x:Name="MenuToggleButton" Style="{StaticResource MaterialDesignHamburgerToggleButton}" IsChecked="False"/>
                         <m:PopupBox DockPanel.Dock="Right" PlacementMode="BottomAndAlignRightEdges" StaysOpen="False">
                             <StackPanel>
-                                <Button Content="ヘルプ" Click="MenuPopupButton_OnClick_Async"/>
-                                <Button Content="ユーザー情報" Click="MenuPopupButton_OnClick_Async"/>
-                                <Button Content="アップデート確認" IsEnabled="False"/>
+                                <Button Content="ヘルプ"/>
+                                <Button Content="ユーザー情報"/>
                                 <Separator/>
-                                <Button Content="バージョン情報" Click="MenuPopupButton_OnClick_Async"/>
+                                <Button Content="バージョン情報" Command="{Binding OpenVersionConfirmDialogCommand}"/>
                             </StackPanel>
                         </m:PopupBox>
-                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="22"
-                                   Text="{Binding ElementName=SideMenuItemsListBox,Path=SelectedItem.Name}"/>
+                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
+                                   Text="{Binding ElementName=SideMenuItemsListBox,Path=SelectedItem.Name}"
+                                   Style="{StaticResource MaterialDesignHeadlineTextBlock}" />
                     </DockPanel>
                 </m:ColorZone>
 

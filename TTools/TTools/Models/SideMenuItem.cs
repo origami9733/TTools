@@ -6,21 +6,20 @@ namespace TTools.Models
 {
     public class SideMenuItem : INotifyPropertyChanged
     {
-        private string _name;
-        private object _content;
-
         public SideMenuItem(string name, object content)
         {
             _name = name;
             Content = content;
         }
 
+        private string _name;
         public string Name
         {
             get { return _name; }
             set { this.MutateVerbose(ref _name, value, RaisePropertyChanged()); }
         }
 
+        private object _content;
         public object Content
         {
             get { return _content; }

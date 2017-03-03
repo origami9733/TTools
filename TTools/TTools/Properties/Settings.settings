@@ -26,5 +26,35 @@
     <Setting Name="TpicsDbPass" Type="System.String" Scope="User">
       <Value Profile="(Default)">whatisyourname</Value>
     </Setting>
+    <Setting Name="InspectionExportSourceFolder" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\Users\tmiy0435\Desktop\test\</Value>
+    </Setting>
+    <Setting Name="InspectionExportSourceFileName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">NKAJSK.csv</Value>
+    </Setting>
+    <Setting Name="InspectionExportCsvFolder" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\Users\tmiy0435\Desktop\test\</Value>
+    </Setting>
+    <Setting Name="InspectionExportCsvFileName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">TxSlipJitu.csv</Value>
+    </Setting>
+    <Setting Name="InspectionExportXlsxFolder" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\Users\tmiy0435\Desktop\test\</Value>
+    </Setting>
+    <Setting Name="InspectionExportXlsxFileName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">TxSlipJitu.xlsx</Value>
+    </Setting>
+    <Setting Name="InspectionImportSql" Type="System.String" Scope="User">
+      <Value Profile="(Default)">SELECT s.*,i.KIGENKUBU,h.DOLOT,h.NAME,h.OYAK,c1.BNAME as BUMONAME,c2.BNAME as VENDORNAME,c3.BNAME as NEXTBUMONAME,c4.BNAME as HOKANNAME,PRICE* KVOL as GAKU FROM TX40_TKT.dbo.XSLIP s left join TX40_TKT.dbo.XHEAD h on s.CODE = h.CODE left join TX40_TKT.dbo.XSECT c1 on s.BUMO = c1.BUMO left join TX40_TKT.dbo.XSECT c2 on s.VENDOR = c2.BUMO left join TX40_TKT.dbo.XSECT c3 on s.NEXTBUMO = c3.BUMO left join TX40_TKT.dbo.XSECT c4 on s.HOKAN = c4.BUMO left join TX40_TKT.dbo.XITEM i on s.CODE = i.CODE and s.BUMO = i.BUMO WHERE(((IDATE = N'' or IDATE is null) or(IDATE &lt;&gt; N'--Remote-' or IDATE is null)) and(s.KVOL &gt; s.TJITUM) and(s.KVOL &gt; s.TJITU) and(s.PSUMI &lt;&gt; N'N' or s.PSUMI is null) and(s.PSUMI &lt;&gt; N'B' or s.PSUMI is null) and((s.PSUMI in ('P', 'T', 'M', 'W', 'H')) or(c2.GKU &lt;&gt; 1 or c2.GKU is null) or c2.GKU = 1 ) and(((h.DOFUKUSUU &lt;&gt; 5 or h.DOFUKUSUU is null) or s.KBAN &gt; 0) and c2.DESNAME like N'SLIP%' or(h.DOFUKUSUU = 5 and s.KBAN = 0) or((h.DOFUKUSUU &lt;&gt; 5 or h.DOFUKUSUU is null) or s.KBAN &gt; 0) and c2.DESNAME like N'GAIC%' )) ORDER BY s.PORDER,s.PEDA,s.KBAN</Value>
+    </Setting>
+    <Setting Name="InspectionImportCsvFolder" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\Users\tmiy0435\Desktop\test\</Value>
+    </Setting>
+    <Setting Name="InspectionImportCsvFileName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">検品用データ.csv</Value>
+    </Setting>
+    <Setting Name="DebugMode" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

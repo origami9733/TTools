@@ -20,12 +20,15 @@
                 </Grid.ColumnDefinitions>
 
                 <DataGrid Grid.Column="0" x:Name="DG1" HorizontalAlignment="Left" VerticalAlignment="Top"
-                          ItemsSource="{Binding Path=DisplayOrderItems,UpdateSourceTrigger=PropertyChanged}"
+                          ItemsSource="{Binding Path=DisplayItems,UpdateSourceTrigger=PropertyChanged}"
                           SelectedItem="{Binding SelectedRowItem}"
-                          AutoGenerateColumns="False" EnableRowVirtualization="True"
+                          AutoGenerateColumns="False"
                           CanUserSortColumns="True" CanUserAddRows="False"
-                          m:DataGridAssist.CellPadding="13 8 8 8"
-                          m:DataGridAssist.ColumnHeaderPadding="8">
+                          EnableRowVirtualization="True"
+                          VirtualizingPanel.IsVirtualizing="True"
+                          VirtualizingPanel.VirtualizationMode="Recycling"
+                          VirtualizingPanel.IsVirtualizingWhenGrouping="True"
+                          m:DataGridAssist.CellPadding="13 8 8 8" m:DataGridAssist.ColumnHeaderPadding="8">
                     <DataGrid.Resources>
                         <domain:BindingProxy x:Key="Proxy" Data="{Binding}"/>
                     </DataGrid.Resources>
@@ -35,39 +38,36 @@
                                                 ElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnStyle}"
                                                 EditingElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnEditingStyle}">
                             <DataGridCheckBoxColumn.Header>
-                                <CheckBox HorizontalAlignment="Center" VerticalAlignment="Center" x:Name="CheckBox1" 
+                                <CheckBox Click="CheckBox_Click" x:Name="CheckBox1" Width="20" Height="20" 
                                           IsChecked="{Binding Data.IsCheckBoxHeaderChecked,UpdateSourceTrigger=PropertyChanged,Mode=OneWay,Source={StaticResource Proxy}}" 
-                                          Click="CheckBox_Click"
+                                          Style="{StaticResource MaterialDesignDarkCheckBox}" 
                                           Command= "{Binding Data.CheckAllCommand,Source={StaticResource Proxy}}"
-                                          CommandParameter="{Binding RelativeSource={RelativeSource Self},Path=IsChecked}">
-                                </CheckBox>
+                                          CommandParameter="{Binding RelativeSource={RelativeSource Self},Path=IsChecked}"
+                                          HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </DataGridCheckBoxColumn.Header>
                         </DataGridCheckBoxColumn>
-                        <m:MaterialDataGridTextColumn Header="契約番号" IsReadOnly="True" 
-                                                      MaxLength="1000" FontSize="16"
+                        <m:MaterialDataGridTextColumn Header="契約番号" IsReadOnly="True" MaxLength="1000" FontSize="16"
                                                       Binding="{Binding OrderItem.契約番号}" 
-                                                      EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}"  />
-                        <m:MaterialDataGridTextColumn Header="伝票No" IsReadOnly="True"
-                                                      MaxLength="1000" FontSize="12"
+                                                      EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}"/>
+                        <m:MaterialDataGridTextColumn Header="伝票No" IsReadOnly="True" MaxLength="1000" FontSize="12"
                                                       Binding="{Binding OrderItem.伝票ＮＯ}" 
-                                                      EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" />
-                        <m:MaterialDataGridTextColumn Header="商品コード" IsReadOnly="True"
-                                                      MaxLength="1000" FontSize="16"
+                                                      EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}"/>
+                        <m:MaterialDataGridTextColumn Header="商品コード" IsReadOnly="True" MaxLength="1000" FontSize="16"
                                                       Binding="{Binding OrderItem.商品コード}"
-                                                      EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" />
-                        <m:MaterialDataGridTextColumn Header="商品名" IsReadOnly="True"
-                                                      MaxLength="1000" FontSize="12"
+                                                      EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}"/>
+                        <m:MaterialDataGridTextColumn Header="商品名" IsReadOnly="True" MaxLength="1000" FontSize="12"
                                                       Binding="{Binding OrderItem.商品名}"
-                                                      EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}"  />
+                                                      EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" />
                     </DataGrid.Columns>
                 </DataGrid>
-                
+
                 <Grid Grid.Column="1" Margin="10 15 0 0" HorizontalAlignment="Right">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="AUTO"/>
                     </Grid.RowDefinitions>
 
+                    
                     <StackPanel Grid.Row="0" Margin="0 0 0 0"
                                 Width="150" Orientation="Vertical"
                                 HorizontalAlignment="Right" VerticalAlignment="Top">
@@ -94,7 +94,7 @@
                                     </StackPanel>
                                 </m:HintAssist.Hint>
                             </ComboBox>
-                            
+
                             <DatePicker Margin="0 25 0 0" Language="ja-JP" FontSize="14"
                                         SelectedDate="{Binding UpdateDate,UpdateSourceTrigger=PropertyChanged,ValidatesOnNotifyDataErrors=True,ValidatesOnExceptions=True}"
                                         Style="{StaticResource MaterialDesignFloatingHintDatePicker}">
@@ -112,10 +112,9 @@
                             <Button Content="Import" Margin="0 15 0 0" 
                                     Command="{Binding ImportCheckedItemsCommand}"/>
                         </StackPanel>
-                        
-                        
                     </StackPanel>
 
+                    <!--#region カテゴリ-->
                     <GroupBox Grid.Row="1" Margin="0 0 0 0" Header="Show Category" >
                         <StackPanel Grid.Column="0" Margin="3 0 0 0" Orientation="Vertical">
                             <Grid Height="27">
@@ -180,9 +179,9 @@
                             </Grid>
                         </StackPanel>
                     </GroupBox>
+                    <!--#endregion-->
                 </Grid>
             </Grid>
-
             <m:Snackbar MessageQueue="{Binding MessageQueue}" IsActive="{Binding IsSnackbarActive}" />
         </Grid>
     </m:DialogHost>

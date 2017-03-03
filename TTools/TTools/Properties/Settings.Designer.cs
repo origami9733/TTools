@@ -118,5 +118,125 @@ namespace TTools.Properties {
                 this["TpicsDbPass"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Users\\tmiy0435\\Desktop\\test\\")]
+        public string InspectionExportSourceFolder {
+            get {
+                return ((string)(this["InspectionExportSourceFolder"]));
+            }
+            set {
+                this["InspectionExportSourceFolder"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("NKAJSK.csv")]
+        public string InspectionExportSourceFileName {
+            get {
+                return ((string)(this["InspectionExportSourceFileName"]));
+            }
+            set {
+                this["InspectionExportSourceFileName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Users\\tmiy0435\\Desktop\\test\\")]
+        public string InspectionExportCsvFolder {
+            get {
+                return ((string)(this["InspectionExportCsvFolder"]));
+            }
+            set {
+                this["InspectionExportCsvFolder"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("TxSlipJitu.csv")]
+        public string InspectionExportCsvFileName {
+            get {
+                return ((string)(this["InspectionExportCsvFileName"]));
+            }
+            set {
+                this["InspectionExportCsvFileName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Users\\tmiy0435\\Desktop\\test\\")]
+        public string InspectionExportXlsxFolder {
+            get {
+                return ((string)(this["InspectionExportXlsxFolder"]));
+            }
+            set {
+                this["InspectionExportXlsxFolder"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("TxSlipJitu.xlsx")]
+        public string InspectionExportXlsxFileName {
+            get {
+                return ((string)(this["InspectionExportXlsxFileName"]));
+            }
+            set {
+                this["InspectionExportXlsxFileName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(@"SELECT s.*,i.KIGENKUBU,h.DOLOT,h.NAME,h.OYAK,c1.BNAME as BUMONAME,c2.BNAME as VENDORNAME,c3.BNAME as NEXTBUMONAME,c4.BNAME as HOKANNAME,PRICE* KVOL as GAKU FROM TX40_TKT.dbo.XSLIP s left join TX40_TKT.dbo.XHEAD h on s.CODE = h.CODE left join TX40_TKT.dbo.XSECT c1 on s.BUMO = c1.BUMO left join TX40_TKT.dbo.XSECT c2 on s.VENDOR = c2.BUMO left join TX40_TKT.dbo.XSECT c3 on s.NEXTBUMO = c3.BUMO left join TX40_TKT.dbo.XSECT c4 on s.HOKAN = c4.BUMO left join TX40_TKT.dbo.XITEM i on s.CODE = i.CODE and s.BUMO = i.BUMO WHERE(((IDATE = N'' or IDATE is null) or(IDATE <> N'--Remote-' or IDATE is null)) and(s.KVOL > s.TJITUM) and(s.KVOL > s.TJITU) and(s.PSUMI <> N'N' or s.PSUMI is null) and(s.PSUMI <> N'B' or s.PSUMI is null) and((s.PSUMI in ('P', 'T', 'M', 'W', 'H')) or(c2.GKU <> 1 or c2.GKU is null) or c2.GKU = 1 ) and(((h.DOFUKUSUU <> 5 or h.DOFUKUSUU is null) or s.KBAN > 0) and c2.DESNAME like N'SLIP%' or(h.DOFUKUSUU = 5 and s.KBAN = 0) or((h.DOFUKUSUU <> 5 or h.DOFUKUSUU is null) or s.KBAN > 0) and c2.DESNAME like N'GAIC%' )) ORDER BY s.PORDER,s.PEDA,s.KBAN")]
+        public string InspectionImportSql {
+            get {
+                return ((string)(this["InspectionImportSql"]));
+            }
+            set {
+                this["InspectionImportSql"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Users\\tmiy0435\\Desktop\\test\\")]
+        public string InspectionImportCsvFolder {
+            get {
+                return ((string)(this["InspectionImportCsvFolder"]));
+            }
+            set {
+                this["InspectionImportCsvFolder"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("検品用データ.csv")]
+        public string InspectionImportCsvFileName {
+            get {
+                return ((string)(this["InspectionImportCsvFileName"]));
+            }
+            set {
+                this["InspectionImportCsvFileName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool DebugMode {
+            get {
+                return ((bool)(this["DebugMode"]));
+            }
+            set {
+                this["DebugMode"] = value;
+            }
+        }
     }
 }

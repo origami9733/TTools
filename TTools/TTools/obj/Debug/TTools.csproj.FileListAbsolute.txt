@@ -160,3 +160,12 @@ C:\Users\tmiy0435\Source\Repos\TTools\TTools\TTools\obj\Debug\Views\BsReplyManag
 C:\Users\tmiy0435\Source\Repos\TTools\TTools\TTools\obj\Debug\Views\BsOrderManagement.baml
 C:\Users\tmiy0435\Source\Repos\TTools\TTools\TTools\obj\Debug\Views\ImportOrder.g.cs
 C:\Users\tmiy0435\Source\Repos\TTools\TTools\TTools\obj\Debug\Views\ImportOrder.baml
+C:\Users\tmiy0435\Source\Repos\TTools\TTools\TTools\obj\Debug\Views\InspectionDataIO.g.cs
+C:\Users\tmiy0435\Source\Repos\TTools\TTools\TTools\obj\Debug\Views\InspectionDataIO.baml
+C:\Users\tmiy0435\Source\Repos\TTools\TTools\TTools\bin\Debug\TTools.exe.manifest
+C:\Users\tmiy0435\Source\Repos\TTools\TTools\TTools\bin\Debug\TTools.application
+C:\Users\tmiy0435\Source\Repos\TTools\TTools\TTools\obj\Debug\TTools.TrustInfo.xml
+C:\Users\tmiy0435\Source\Repos\TTools\TTools\TTools\obj\Debug\TTools.exe.manifest
+C:\Users\tmiy0435\Source\Repos\TTools\TTools\TTools\obj\Debug\TTools.application
+C:\Users\tmiy0435\Source\Repos\TTools\TTools\TTools\obj\Debug\Views\MachineOrderManagement.baml
+C:\Users\tmiy0435\Source\Repos\TTools\TTools\TTools\obj\Debug\Views\MachineOrderManagement.g.cs

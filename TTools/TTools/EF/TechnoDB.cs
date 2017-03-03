@@ -1,5 +1,6 @@
 ﻿namespace TTools.EF
 {
+    using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity;
     using TTools.Models;
 
@@ -14,5 +15,6 @@
         public virtual DbSet<ProductItem> ProductItems { get; set; }
         public virtual DbSet<EItem> EItems { get; set; }
         public virtual DbSet<RelationItem> RelationItems { get; set; }
+        public virtual DbSet<IncrementManagementItem> IncrementManager { get; set; }
     }
 }

@@ -127,7 +127,7 @@ namespace TTools.ViewModels
         /// </summary>
         private void SetFilter()
         {
-            if (String.IsNullOrEmpty(SearchString) == true || string.IsNullOrWhiteSpace(SearchString) == true)
+            if (string.IsNullOrEmpty(SearchString) == true || string.IsNullOrWhiteSpace(SearchString) == true)
             {
                 collectionView.Filter = null;
             }

@@ -1,0 +1,107 @@
+﻿<UserControl x:Class="TTools.Views.MachineOrderManagement"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:m="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:domain="clr-namespace:TTools.Domain"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+
+    <m:DialogHost IsOpen="{Binding IsDialogOpen}" DialogContent="{Binding DialogContent}" CloseOnClickAway="False" >
+        <Grid>
+            <Grid Margin="18 13 23 23">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="AUTO"/>
+                </Grid.ColumnDefinitions>
+
+                <DataGrid Grid.Column="0" x:Name="DG1"
+                          HorizontalAlignment="Left" VerticalAlignment="Top"
+                          ItemsSource="{Binding Path=DisplayItems,UpdateSourceTrigger=PropertyChanged}"
+                          SelectedItem="{Binding SelectedRowItem}"
+                          AutoGenerateColumns="False"
+                          CanUserSortColumns="True" CanUserAddRows="False"
+                          m:DataGridAssist.CellPadding="13 8 8 8"
+                          m:DataGridAssist.ColumnHeaderPadding="8"
+                          VirtualizingPanel.IsVirtualizing="True"
+                          VirtualizingPanel.VirtualizationMode="Recycling"
+                          VirtualizingPanel.IsVirtualizingWhenGrouping="True">
+                    <DataGrid.Resources>
+                        <domain:BindingProxy x:Key="Proxy" Data="{Binding}"/>
+                    </DataGrid.Resources>
+
+                    <DataGrid.GroupStyle>
+                        <GroupStyle>
+                            <GroupStyle.ContainerStyle>
+                                <Style TargetType="{x:Type GroupItem}">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="{x:Type GroupItem}">
+                                                <Expander IsExpanded="True">
+                                                    <Expander.Header>
+                                                        <Grid ShowGridLines="False">
+                                                            <Grid.RowDefinitions>
+                                                                <RowDefinition Height="*"/>
+                                                            </Grid.RowDefinitions>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="*"/>
+                                                            </Grid.ColumnDefinitions>
+
+                                                            
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <TextBlock Text="{Binding Items[0].OrderItem.契約番号}"/>
+                                                                <TextBlock Margin="10 0 0 0" Text="{Binding Items[0].ShortName}"/>
+                                                                <TextBlock Margin="10 0 0 0" Text="{Binding Items[0].OrderId}"/>
+                                                                <TextBlock Margin="10 0 0 0" Text="{Binding Items[0].SumPrice}"/>
+                                                                <TextBlock Margin="10 0 0 0" Text="{Binding Items[0].ItemsCount}"/>
+                                                            </StackPanel>
+                                                        </Grid>
+                                                    </Expander.Header>
+                                                    <Expander.Content>
+                                                        <ItemsPresenter/>
+                                                    </Expander.Content>
+                                                </Expander>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </GroupStyle.ContainerStyle>
+                        </GroupStyle>
+                    </DataGrid.GroupStyle>
+
+                    <DataGrid.Columns>
+                        <m:MaterialDataGridTextColumn Header="伝票NO" Binding="{Binding OrderItem.伝票ＮＯ}" 
+                                                      FontSize="14" IsReadOnly="True"
+                                                      EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" />
+                        <m:MaterialDataGridTextColumn Header="商品コード" Binding="{Binding OrderItem.商品コード}" 
+                                                      FontSize="14" IsReadOnly="True"
+                                                      EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" />
+                        <m:MaterialDataGridTextColumn Header="LongName" Binding="{Binding ProductItem.LongName}" 
+                                                      FontSize="14" IsReadOnly="False"
+                                                      EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" />
+                        <m:MaterialDataGridTextColumn Header="ShortName" Binding="{Binding ProductItem.ShortName}" 
+                                                      FontSize="14" IsReadOnly="False"
+                                                      EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" />
+                        <m:MaterialDataGridTextColumn Header="AliasName" Binding="{Binding ProductItem.AliasName}" 
+                                                      FontSize="14" IsReadOnly="True"
+                                                      EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" />
+                        <m:MaterialDataGridTextColumn Header="AliasName" Binding="{Binding OrderItem.商品名}" 
+                                                      FontSize="14" IsReadOnly="True"
+                                                      EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" />
+                        <m:MaterialDataGridTextColumn Header="Price" Binding="{Binding ProductItem.Price}" 
+                                                      FontSize="14" IsReadOnly="False"
+                                                      EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" />
+                    </DataGrid.Columns>
+                </DataGrid>
+
+                <Button Grid.Column="1" Command="{Binding LoadCommand}" Content="Load"/>
+            </Grid>
+            <m:Snackbar MessageQueue="{Binding MessageQueue}" IsActive="{Binding IsSnackbarActive}" />
+        </Grid>
+    </m:DialogHost>
+</UserControl>
+

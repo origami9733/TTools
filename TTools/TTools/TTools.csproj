@@ -13,6 +13,27 @@
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <PublishUrl>\\192.168.100.15\ad1-Techno\99b_WorkDisk\012_システム課\003_業務アプリ開発\100_TTools\000_ClickOnes\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Unc</InstallFrom>
+    <UpdateEnabled>true</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <TargetCulture>ja</TargetCulture>
+    <ProductName>TTools</ProductName>
+    <PublisherName>宮川</PublisherName>
+    <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
+    <WebPage>publish.html</WebPage>
+    <ApplicationRevision>14</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -76,6 +97,28 @@
   <PropertyGroup>
     <StartupObject>TTools.App</StartupObject>
   </PropertyGroup>
+  <PropertyGroup>
+    <TargetZone>LocalIntranet</TargetZone>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>true</GenerateManifests>
+  </PropertyGroup>
+  <PropertyGroup />
+  <PropertyGroup>
+    <ManifestCertificateThumbprint>186CAB0808FAE9E87AC72083C52CC12BCED3F4E5</ManifestCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestKeyFile>TTools_TemporaryKey.pfx</ManifestKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignManifests>true</SignManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Resources\AppIcon.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
@@ -138,6 +181,7 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Reactive.Core, Version=3.0.3000.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Reactive.Core.3.1.1\lib\net46\System.Reactive.Core.dll</HintPath>
@@ -188,24 +232,30 @@
     <Compile Include="Domain\Calendar.cs" />
     <Compile Include="Domain\DispatchObservableCollection.cs" />
     <Compile Include="Domain\DrivedObject.cs" />
+    <Compile Include="Domain\MachineOrderItemsToCount.cs" />
+    <Compile Include="Domain\NullToEmptyComverter.cs" />
     <Compile Include="Domain\TpicsDbContext.cs" />
-    <Compile Include="Models\DisplayOrderImportItem.cs" />
-    <Compile Include="Models\DisplayOrderManagementItem.cs" />
-    <Compile Include="Models\DisplayReplyManagementItem.cs" />
+    <Compile Include="Models\DisplayModel\DisplayMachineOrderManagementItem.cs" />
+    <Compile Include="Models\DisplayModel\DisplayOrderImportItem.cs" />
+    <Compile Include="Models\DisplayModel\DisplayBsOrderManagementItem.cs" />
+    <Compile Include="Models\DisplayModel\DisplayReplyManagementItem.cs" />
     <Compile Include="Models\EItem.cs" />
+    <Compile Include="Models\IncrementManagementItem.cs" />
     <Compile Include="Models\OrderItem.cs" />
     <Compile Include="Models\ProductItem.cs" />
     <Compile Include="EF\TechnoDB.cs" />
-    <Compile Include="Models\Relationship.cs" />
+    <Compile Include="Models\RelationItem.cs" />
     <Compile Include="Domain\OriginalStringConverter.cs" />
     <Compile Include="Models\VendorItem.cs" />
     <Compile Include="Properties\Settings.cs" />
     <Compile Include="ViewModels\BsOrderManagementVM.cs" />
     <Compile Include="ViewModels\EItemSelectDialogVM.cs" />
     <Compile Include="ViewModels\ImportOrdersVM.cs" />
+    <Compile Include="ViewModels\InspectionDataIOVM.cs" />
+    <Compile Include="ViewModels\MachineOrderManagementVM.cs" />
     <Compile Include="ViewModels\MainWindowVM.cs" />
     <Compile Include="Domain\RelayCommand.cs" />
-    <Compile Include="ViewModels\BsReplyManagement.cs" />
+    <Compile Include="ViewModels\BsReplyManagementVM.cs" />
     <Compile Include="Views\Dialogs\YesConfirmDialog.xaml.cs">
       <DependentUpon>YesConfirmDialog.xaml</DependentUpon>
     </Compile>
@@ -254,6 +304,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\InspectionDataIO.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MachineOrderManagement.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -264,6 +322,12 @@
     </Compile>
     <Compile Include="Domain\NotifyPropertyChangedExtension.cs" />
     <Compile Include="Models\SideMenuItem.cs" />
+    <Compile Include="Views\InspectionDataIO.xaml.cs">
+      <DependentUpon>InspectionDataIO.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MachineOrderManagement.xaml.cs">
+      <DependentUpon>MachineOrderManagement.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -296,13 +360,30 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="packages.config" />
+    <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="TTools_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.6.1 %28x86 および x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\AppIcon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

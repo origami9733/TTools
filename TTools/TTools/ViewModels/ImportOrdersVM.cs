@@ -26,7 +26,6 @@ namespace TTools.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
         #endregion
-
         #region エラー管理
 
         //発生中のエラー保持
@@ -87,14 +86,12 @@ namespace TTools.ViewModels
             }
         }
         #endregion
-
         #region コンストラクタ
         public ImportOrderVM(MainWindowVM arg)
         {
             masterVM = arg;
         }
         #endregion
-
         #region 変数
         private MainWindowVM masterVM;
         private TechnoDB context;
@@ -181,19 +178,19 @@ namespace TTools.ViewModels
         /// </summary>
         public int? AllCount
         {
-            get { return DisplayOrderItems?.Count(); }
+            get { return DisplayItems?.Count(); }
         }
         public int? MachineCount
         {
-            get { return DisplayOrderItems?.Count(x => x.OrderItem.フラグ１ == " "); }
+            get { return DisplayItems?.Count(x => x.OrderItem.フラグ１ == " "); }
         }
         public int? BsCount
         {
-            get { return DisplayOrderItems?.Count(x => x.OrderItem.フラグ１ == "1"); }
+            get { return DisplayItems?.Count(x => x.OrderItem.フラグ１ == "0"); }
         }
         public int? PlCount
         {
-            get { return DisplayOrderItems?.Count(x => x.OrderItem.フラグ１ == "2"); }
+            get { return DisplayItems?.Count(x => x.OrderItem.フラグ１ == "1"); }
         }
         /// <summary>
         /// カテゴリーの選択状態
@@ -247,14 +244,14 @@ namespace TTools.ViewModels
         /// </summary>
         public bool IsCheckBoxHeaderChecked
         {
-            get { return DisplayOrderItems?.Count(x => x.IsChecked == true) > 0; }
+            get { return DisplayItems?.Count(x => x.IsChecked == true) > 0; }
         }
         /// <summary>
         /// 選択状態のアイテムのカウント
         /// </summary>
         public string IsCheckedCount
         {
-            get { return DisplayOrderItems?.Count(x => x.IsChecked == true).ToString(); }
+            get { return DisplayItems?.Count(x => x.IsChecked == true).ToString(); }
         }
         /// <summary>
         /// スナックバー関連
@@ -308,7 +305,7 @@ namespace TTools.ViewModels
         }
 
         private DispatchObservableCollection<DisplayOrderImportItem> _displayOrderItems;
-        public DispatchObservableCollection<DisplayOrderImportItem> DisplayOrderItems
+        public DispatchObservableCollection<DisplayOrderImportItem> DisplayItems
         {
             get { return _displayOrderItems; }
             set
@@ -320,6 +317,7 @@ namespace TTools.ViewModels
         }
         #endregion
 
+
         /// <summary>
         /// ロード
         /// </summary>
@@ -328,66 +326,33 @@ namespace TTools.ViewModels
             UnReadObservables();
 
             context = new TechnoDB();
-            context.ProductItems.ToList();
-            DisplayOrderItems = new DispatchObservableCollection<DisplayOrderImportItem>();
+            DisplayItems = new DispatchObservableCollection<DisplayOrderImportItem>();
 
             var ghContext = new BeautyGhContext();
             var originalOrderItems = new DispatchObservableCollection<OrderItem>();
+            BindingOperations.EnableCollectionSynchronization(originalOrderItems, new object());
+            BindingOperations.EnableCollectionSynchronization(DisplayItems, new object());
 
-            //商品コードマスタへの登録
             await Task.Run(() =>
             {
-                originalOrderItems = ghContext.Load(MakeReadSQL());
-
-                foreach (var oItem in originalOrderItems)
+                originalOrderItems = new DispatchObservableCollection<OrderItem>(ghContext.Load(MakeReadSQL()));
+                //表示用コレクションに格納
+                foreach (var x in originalOrderItems)
                 {
-                    if (context.ProductItems.Local.Count(x => x.ProductId == oItem.商品コード) == 0)
-                    {
-                        var AddItem = new ProductItem();
-                        AddItem.ProductId = oItem.商品コード;
-                        AddItem.AliasName = oItem.商品名;
-                        AddItem.Detail = oItem.仕様_備考;
-                        AddItem.BluePrint = oItem.業者図番;
-                        AddItem.Price = oItem.発注単価;
-
-                        switch (oItem.フラグ１)
-                        {
-                            case " ":
-                                AddItem.Category = "Machine";
-                                break;
-                            case "0":
-                                AddItem.Category = "BS";
-                                break;
-                            case "1":
-                                AddItem.Category = "PL";
-                                break;
-                            case null:
-                                break;
-                            default:
-                                break;
-                        }
-                        context.ProductItems.Add(AddItem);
-                    }
+                    var item = new DisplayOrderImportItem();
+                    item.IsChecked = false;
+                    item.OrderItem = x;
+                    DisplayItems.Add(item);
                 }
-                context.SaveChanges();
             });
 
-            //格納
-            foreach (var x in originalOrderItems)
-            {
-                var item = new DisplayOrderImportItem();
-                item.IsChecked = false;
-                item.OrderItem = x;
-                DisplayOrderItems.Add(item);
-            }
-
-            collectionView = CollectionViewSource.GetDefaultView(this.DisplayOrderItems) as ListCollectionView;
+            collectionView = CollectionViewSource.GetDefaultView(DisplayItems) as ListCollectionView;
             SetObservable();
             ReloadOrderCounter();
 
             IsAllChecked = true;
-            RaisePropertyChanged(nameof(ImportOrderVM.IsCheckBoxHeaderChecked));
-            RaisePropertyChanged(nameof(ImportOrderVM.IsCheckedCount));
+            RaisePropertyChanged(nameof(IsCheckBoxHeaderChecked));
+            RaisePropertyChanged(nameof(IsCheckedCount));
             IsDialogOpen = false;
         }
         /// <summary>
@@ -399,34 +364,111 @@ namespace TTools.ViewModels
             DialogContent = new LoadingProgressDialog();
             int successCount = 0;
 
+
             await Task.Run(() =>
             {
                 using (context = new TechnoDB())
                 {
-                    foreach (var item in DisplayOrderItems.Where(x => x.IsChecked == true))
+                    context.OrderItems.ToList();
+                    context.ProductItems.ToList();
+                    context.IncrementManager.ToList();
+
+                    foreach (var item in DisplayItems.Where(x => x.IsChecked == true))
                     {
-                        if (context.OrderItems.Where(x => x.伝票ＮＯ == item.OrderItem.伝票ＮＯ).Count() == 0)
+                        if (context.OrderItems.Local.Where(x => x.伝票ＮＯ == item.OrderItem.伝票ＮＯ).Count() == 0)
                         {
-                            context.OrderItems.Add(item.OrderItem);
+                            AddItems(item);
                             successCount++;
                         }
                     }
                     context.SaveChanges();
                 }
             });
-
+            
             await Load();
 
             string msg = successCount.ToString() + "件のデータのインポートに成功しました。";
             ShowSnackbar(msg);
         }
         /// <summary>
+        /// アイテムをルールに従ってContextに追加する。
+        /// </summary>
+        /// <param name="item"></param>
+        private void AddItems(DisplayOrderImportItem item)
+        {
+            //商品マスタ登録
+            if (context.ProductItems.Local.Count(x => x.ProductId == item.OrderItem.商品コード ) == 0) 
+            {
+                var AddProductItem = new ProductItem();
+
+                //その他コードの処理
+                if (item.OrderItem.商品コード == "509999")
+                {
+                    using (var context2 = new TechnoDB())
+                    {
+                        context2.IncrementManager.ToList();
+                        var items = context2.IncrementManager.Local;
+                        var target = items.Where(x => x.Name == "509999").Select(x => x.Number);
+
+                        //インクリメントマネージャに509999が存在しない場合は登録する
+                        if (target.Count() == 0)
+                        {
+                            items.Add(new IncrementManagementItem() { Name = "509999", Number = 0 });
+                            context2.SaveChanges();
+                        }
+
+                        var number = target.First();
+                        foreach (var a in context2.IncrementManager)
+                        {
+                            if (a.Name == "509999")
+                            {
+                                a.Number = number + 1;
+                                AddProductItem.ProductId = "509999-" + (number + 1).ToString();
+                                item.OrderItem.商品コード = "509999-" + (number + 1).ToString();
+                            }
+                        }
+                        context2.SaveChanges();
+                    }
+                }
+                else
+                {
+                    AddProductItem.ProductId = item.OrderItem.商品コード;
+                }
+
+                AddProductItem.AliasName = item.OrderItem.商品名;
+                AddProductItem.Detail = item.OrderItem.仕様_備考;
+                AddProductItem.BluePrint = item.OrderItem.業者図番;
+                AddProductItem.Price = item.OrderItem.発注単価;
+
+                //商品カテゴリーを選択
+                switch (item.OrderItem.フラグ１)
+                {
+                    case " ":
+                        AddProductItem.Category = "Machine";
+                        break;
+                    case "0":
+                        AddProductItem.Category = "BS";
+                        break;
+                    case "1":
+                        AddProductItem.Category = "PL";
+                        break;
+                    default:
+                        break;
+                }
+
+                context.ProductItems.Add(AddProductItem);
+            }
+
+            context.OrderItems.Add(item.OrderItem);
+        }
+        
+        /// <summary>
         /// 監視状態を設定する
         /// </summary>
         private void SetObservable()
         {
             //監視状態を設定 OrderItem
-            foreach (var x in DisplayOrderItems)
+            foreach (var x in DisplayItems)
             {
                 var a = Observable.FromEventPattern<PropertyChangedEventHandler, PropertyChangedEventArgs>(
                     h => x.PropertyChanged += h,
@@ -493,11 +535,11 @@ namespace TTools.ViewModels
                 switch (arg)
                 {
                     case "ShowAll":
-                        foreach (DisplayOrderImportItem a in DisplayOrderItems) a.IsChecked = false;
+                        foreach (DisplayOrderImportItem a in DisplayItems) a.IsChecked = false;
                         collectionView.Filter = null;
                         break;
                     case "Machine":
-                        foreach (DisplayOrderImportItem a in DisplayOrderItems) a.IsChecked = false;
+                        foreach (DisplayOrderImportItem a in DisplayItems) a.IsChecked = false;
                         collectionView.Filter += x =>
                         {
                             var item = (DisplayOrderImportItem)x;
@@ -505,7 +547,7 @@ namespace TTools.ViewModels
                         };
                         break;
                     case "BS":
-                        foreach (DisplayOrderImportItem a in DisplayOrderItems) a.IsChecked = false;
+                        foreach (DisplayOrderImportItem a in DisplayItems) a.IsChecked = false;
                         collectionView.Filter += x =>
                         {
                             var item = (DisplayOrderImportItem)x;
@@ -513,7 +555,7 @@ namespace TTools.ViewModels
                         };
                         break;
                     case "PL":
-                        foreach (DisplayOrderImportItem a in DisplayOrderItems) a.IsChecked = false;
+                        foreach (DisplayOrderImportItem a in DisplayItems) a.IsChecked = false;
                         collectionView.Filter = x =>
                         {
                             var item = (DisplayOrderImportItem)x;
@@ -559,7 +601,7 @@ namespace TTools.ViewModels
         }
 
 
-    
+
         private ICommand _loadCommand;
         public ICommand LoadCommand
         {
@@ -606,7 +648,7 @@ namespace TTools.ViewModels
         }
         private bool CanExecuteChangeCategoryCommand(string arg)
         {
-            return DisplayOrderItems != null;
+            return DisplayItems != null;
         }
 
         private ICommand _checkAllCommand;
@@ -629,12 +671,12 @@ namespace TTools.ViewModels
             }
             else
             {
-                foreach (DisplayOrderImportItem a in DisplayOrderItems) a.IsChecked = false;
+                foreach (DisplayOrderImportItem a in DisplayItems) a.IsChecked = false;
             }
         }
         private bool CanExecuteCheckAllCommand(object arg)
         {
-            return DisplayOrderItems != null;
+            return DisplayItems != null;
         }
 
         private ICommand _importCheckedItemsCommand;
@@ -668,7 +710,7 @@ namespace TTools.ViewModels
         }
         private bool CanExecuteImportCheckedItemCommand(string arg)
         {
-            return DisplayOrderItems?.Count(x => x.IsChecked == true) > 0;
+            return DisplayItems?.Count(x => x.IsChecked == true) > 0;
         }
     }
 }

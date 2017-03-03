@@ -149,6 +149,21 @@ namespace TTools.ViewModels
                 }
             }
         }
+        public bool ForObservableChangesStatus { get; set; } = true;
+
+        //表示用コレクション
+        private DispatchObservableCollection<DisplayBsOrderManagementItem> _displayItems;
+        public DispatchObservableCollection<DisplayBsOrderManagementItem> DisplayItems
+        {
+            get { return _displayItems; }
+            set
+            {
+                if (_displayItems == value) return;
+                _displayItems = value;
+                RaisePropertyChanged();
+            }
+        }
+
         #endregion
 
         #region DataGridColumn表示設定プロパティ
@@ -165,21 +180,7 @@ namespace TTools.ViewModels
         }
         #endregion
 
-        public bool ForObservableChangesStatus { get; set; } = true;
-
-        private DispatchObservableCollection<DisplayOrderManagementItem> _displayOrderManagementItems;
-        public DispatchObservableCollection<DisplayOrderManagementItem> DisplayOrderManagementItems
-        {
-            get { return _displayOrderManagementItems; }
-            set
-            {
-                if (_displayOrderManagementItems == value) return;
-                _displayOrderManagementItems = value;
-                RaisePropertyChanged();
-            }
-        }
-
-
+        
         private ICommand _loadCommand;
         public ICommand LoadCommand
         {
@@ -209,7 +210,7 @@ namespace TTools.ViewModels
         }
         public void ExecuteSelectedRelationDeleteCommand(object arg)
         {
-            SelectedRelationItemDelete((DisplayOrderManagementItem)SelectedRowItem);
+            SelectedRelationItemDelete((DisplayBsOrderManagementItem)SelectedRowItem);
         }
         private bool CanExecuteSelectedRelationDeleteCommand(object arg)
         {
@@ -231,7 +232,7 @@ namespace TTools.ViewModels
         }
         private bool CanExecuteOrderRegistrationCommand(string arg)
         {
-            bool can = DisplayOrderManagementItems.Where(x => x.OrderItem.伝票ＮＯ == arg & x.RelationItem == null).Count() == 0;
+            bool can = DisplayItems.Where(x => x.OrderItem.伝票ＮＯ == arg & x.RelationItem == null).Count() == 0;
             return can;
         }
 
@@ -248,10 +249,10 @@ namespace TTools.ViewModels
         public void ExecuteGroupHeaderRefreshCommand(object arg)
         {
             var args = (ReadOnlyObservableCollection<object>)arg;
-            List<DisplayOrderManagementItem> items = new List<DisplayOrderManagementItem>();
+            List<DisplayBsOrderManagementItem> items = new List<DisplayBsOrderManagementItem>();
             foreach (var a in args)
             {
-                items.Add((DisplayOrderManagementItem)a);
+                items.Add((DisplayBsOrderManagementItem)a);
             }
             SyncronizeProduct(items);
         }
@@ -270,10 +271,10 @@ namespace TTools.ViewModels
         {
             var args = (ReadOnlyObservableCollection<object>)arg;
 
-            List<DisplayOrderManagementItem> items = new List<DisplayOrderManagementItem>();
+            List<DisplayBsOrderManagementItem> items = new List<DisplayBsOrderManagementItem>();
             foreach (var a in args)
             {
-                items.Add((DisplayOrderManagementItem)a);
+                items.Add((DisplayBsOrderManagementItem)a);
             }
             EItemSelect(items);
         }
@@ -292,10 +293,10 @@ namespace TTools.ViewModels
         {
             var args = (ReadOnlyObservableCollection<object>)arg;
 
-            List<DisplayOrderManagementItem> items = new List<DisplayOrderManagementItem>();
+            List<DisplayBsOrderManagementItem> items = new List<DisplayBsOrderManagementItem>();
             foreach (var a in args)
             {
-                items.Add((DisplayOrderManagementItem)a);
+                items.Add((DisplayBsOrderManagementItem)a);
             }
             SyncronizeProduct(items);
         }
@@ -309,7 +310,7 @@ namespace TTools.ViewModels
         {
             context = null;
             collectionView = null;
-            DisplayOrderManagementItems = null;
+            DisplayItems = null;
         }
 
 
@@ -317,7 +318,7 @@ namespace TTools.ViewModels
         /// 現在選択されているリレーションを削除する
         /// </summary>
         /// <param name="targetItem"></param>
-        private void SelectedRelationItemDelete(DisplayOrderManagementItem targetItem)
+        private void SelectedRelationItemDelete(DisplayBsOrderManagementItem targetItem)
         {
             UnReadObservables();
 
@@ -329,7 +330,7 @@ namespace TTools.ViewModels
             context.Entry(rItem).Reload();
 
             //表示用コレクションから削除
-            var displayItems = DisplayOrderManagementItems.Where(x => x.RelationItem?.ProductId == rItem.ProductId & x.EItem?.Id == rItem.EItemId);
+            var displayItems = DisplayItems.Where(x => x.RelationItem?.ProductId == rItem.ProductId & x.EItem?.Id == rItem.EItemId);
             foreach (var a in displayItems)
             {
                 ForObservableChangesStatus = false;
@@ -350,8 +351,8 @@ namespace TTools.ViewModels
 
             RefreshDisplayRows();
 
-            List<DisplayOrderManagementItem> SyncronizeItems = new List<DisplayOrderManagementItem>();
-            var targetPitems = DisplayOrderManagementItems.Where(x => x.RelationItem?.ProductId == rItem.ProductId & x.OrderItem == targetItem.OrderItem);
+            List<DisplayBsOrderManagementItem> SyncronizeItems = new List<DisplayBsOrderManagementItem>();
+            var targetPitems = DisplayItems.Where(x => x.RelationItem?.ProductId == rItem.ProductId & x.OrderItem == targetItem.OrderItem);
 
             foreach (var a in targetPitems)
             {
@@ -362,19 +363,17 @@ namespace TTools.ViewModels
 
             SetObservableProperties();
         }
-
-
         /// <summary>
         /// 空白行の整理を行う
         /// </summary>
         private void RefreshDisplayRows()
         {
-            var test = DisplayOrderManagementItems.Select(x => x.OrderItem).Distinct().ToList();
+            var test = DisplayItems.Select(x => x.OrderItem).Distinct().ToList();
 
             foreach (var oItem in test)
             {
-                var FullItems = DisplayOrderManagementItems.Where(x => x.OrderItem == oItem & x.RelationItem != null);
-                var NullItems = DisplayOrderManagementItems.Where(x => x.OrderItem == oItem & x.RelationItem == null);
+                var FullItems = DisplayItems.Where(x => x.OrderItem == oItem & x.RelationItem != null);
+                var NullItems = DisplayItems.Where(x => x.OrderItem == oItem & x.RelationItem == null);
 
                 //ヌル行が1行だけの場合はスルー。
                 if (FullItems.Count() == 0 & NullItems.Count() == 1)
@@ -387,14 +386,14 @@ namespace TTools.ViewModels
                     {
                         foreach (var a in NullItems.ToList())
                         {
-                            DisplayOrderManagementItems.Remove(a);
+                            DisplayItems.Remove(a);
                         }
                     }
                     else
                     {
                         for (int i = 0; i < (NullItems.Count() - 1); i++)
                         {
-                            DisplayOrderManagementItems.Remove(NullItems.First());
+                            DisplayItems.Remove(NullItems.First());
                         }
                     }
                 }
@@ -404,7 +403,7 @@ namespace TTools.ViewModels
         ///<summary>
         ///グループヘッダーから受け取った商品構成に対する同期処理
         /// </summary>
-        private void SyncronizeProduct(List<DisplayOrderManagementItem> arg)
+        private void SyncronizeProduct(List<DisplayBsOrderManagementItem> arg)
         {
             UnReadObservables();
 
@@ -412,7 +411,7 @@ namespace TTools.ViewModels
 
             foreach (var a in arg)
             {
-                var item = (DisplayOrderManagementItem)a;
+                var item = (DisplayBsOrderManagementItem)a;
                 //受注アイテム
                 if (item.OrderItem != null)
                 {
@@ -421,14 +420,14 @@ namespace TTools.ViewModels
                     if (dbitem == null)
                     {
                         context.Entry(item.OrderItem).Reload();
-                        List<DisplayOrderManagementItem> dellItems = new List<DisplayOrderManagementItem>();
-                        foreach (var b in DisplayOrderManagementItems.Where(x => x.OrderItem == item.OrderItem))
+                        List<DisplayBsOrderManagementItem> dellItems = new List<DisplayBsOrderManagementItem>();
+                        foreach (var b in DisplayItems.Where(x => x.OrderItem == item.OrderItem))
                         {
                             dellItems.Add(b);
                         }
                         foreach (var b in dellItems)
                         {
-                            DisplayOrderManagementItems.Remove(b);
+                            DisplayItems.Remove(b);
                         }
                     }
                     else
@@ -437,14 +436,14 @@ namespace TTools.ViewModels
                         if (dbitem.GetValue<string>(nameof(OrderItem.OrderStatus)) != null)
                         {
                             context.Entry(item.OrderItem).Reload();
-                            List<DisplayOrderManagementItem> dellItems = new List<DisplayOrderManagementItem>();
-                            foreach (var b in DisplayOrderManagementItems.Where(x => x.OrderItem == item.OrderItem))
+                            List<DisplayBsOrderManagementItem> dellItems = new List<DisplayBsOrderManagementItem>();
+                            foreach (var b in DisplayItems.Where(x => x.OrderItem == item.OrderItem))
                             {
                                 dellItems.Add(b);
                             }
                             foreach (var b in dellItems)
                             {
-                                DisplayOrderManagementItems.Remove(b);
+                                DisplayItems.Remove(b);
                             }
                         }
                     }
@@ -458,7 +457,7 @@ namespace TTools.ViewModels
                     if (dbitem == null)
                     {
                         context.Entry(item.RelationItem).Reload();
-                        foreach (var b in DisplayOrderManagementItems.Where(x => x.RelationItem == item.RelationItem))
+                        foreach (var b in DisplayItems.Where(x => x.RelationItem == item.RelationItem))
                         {
                             b.RelationItem = null;
                             b.EItem = null;
@@ -496,7 +495,7 @@ namespace TTools.ViewModels
             /// </summary>
             foreach (var a in context.RelationItems.Where(x => x.ProductId == productID).ToList())
             {
-                if (DisplayOrderManagementItems.Where(x => x.ProductItem.ProductId == productID).Select(x => x.RelationItem).ToList().Contains(a) == false)
+                if (DisplayItems.Where(x => x.ProductItem.ProductId == productID).Select(x => x.RelationItem).ToList().Contains(a) == false)
                 {
                     if (addRelations.Where(x => x.ProductId == a.ProductId & x.EItemId == a.EItemId).Count() == 0)
                     {
@@ -513,18 +512,18 @@ namespace TTools.ViewModels
             /// </summary>
             foreach (var vrItem in addRelations)
             {
-                var targetOrderItems = DisplayOrderManagementItems.Where(x => x.ProductItem.ProductId == vrItem.ProductId).Select(x => x.OrderItem).Distinct();
+                var targetOrderItems = DisplayItems.Where(x => x.ProductItem.ProductId == vrItem.ProductId).Select(x => x.OrderItem).Distinct();
                 if (targetOrderItems.Count() == 0) break;
-                List<DisplayOrderManagementItem> addItems = new List<DisplayOrderManagementItem>();
+                List<DisplayBsOrderManagementItem> addItems = new List<DisplayBsOrderManagementItem>();
 
                 foreach (var oItem in targetOrderItems.ToList())
                 {
-                    var count = DisplayOrderManagementItems.Count(x => x.OrderItem.伝票ＮＯ == oItem.伝票ＮＯ & x.RelationItem != null);
+                    var count = DisplayItems.Count(x => x.OrderItem.伝票ＮＯ == oItem.伝票ＮＯ & x.RelationItem != null);
 
                     //対象となる構成情報に子がいない時
                     if (count == 0)
                     {
-                        var targetItem = DisplayOrderManagementItems.Where(x => x.OrderItem.伝票ＮＯ == oItem.伝票ＮＯ & x.ProductItem.ProductId == vrItem.ProductId).First();
+                        var targetItem = DisplayItems.Where(x => x.OrderItem.伝票ＮＯ == oItem.伝票ＮＯ & x.ProductItem.ProductId == vrItem.ProductId).First();
                         var eItem = context.EItems.Where(x => x.Id == vrItem.EItemId).First();
                         var rItem = context.RelationItems.Where(x => x.ProductId == vrItem.ProductId & x.EItemId == vrItem.EItemId).First();
 
@@ -533,7 +532,7 @@ namespace TTools.ViewModels
                     }
                     else
                     {
-                        var addItem = new DisplayOrderManagementItem();
+                        var addItem = new DisplayBsOrderManagementItem();
                         var eItem = context.EItems.Where(x => x.Id == vrItem.EItemId).First();
                         var pItem = context.ProductItems.Where(x => x.ProductId == vrItem.ProductId).First();
                         var rItem = context.RelationItems.Where(x => x.ProductId == vrItem.ProductId & x.EItemId == vrItem.EItemId).First();
@@ -544,7 +543,7 @@ namespace TTools.ViewModels
                         addItem.EItem = eItem;
 
                         addItems.Add(addItem);
-                        DisplayOrderManagementItems.Add(addItem);
+                        DisplayItems.Add(addItem);
                     }
                 }
             }
@@ -558,7 +557,7 @@ namespace TTools.ViewModels
         private void ResolveVendorItem()
         {
             UnReadObservables();
-            foreach (var a in DisplayOrderManagementItems.Where(x => x.EItem != null))
+            foreach (var a in DisplayItems.Where(x => x.EItem != null))
             {
                 if (a.EItem.VendorId != a.VendorItem?.Id)
                 {
@@ -585,7 +584,8 @@ namespace TTools.ViewModels
             venderItems = TpicsDbContext.LoadVendor();
 
             context = new TechnoDB();
-            DisplayOrderManagementItems = new DispatchObservableCollection<DisplayOrderManagementItem>();
+            DisplayItems = new DispatchObservableCollection<DisplayBsOrderManagementItem>();
+            BindingOperations.EnableCollectionSynchronization(DisplayItems, new object());
 
             IsDialogOpen = true;
 
@@ -606,17 +606,17 @@ namespace TTools.ViewModels
                     //リレーションが存在しない場合、rItemとeItemはNULL
                     if (children.Count() == 0)
                     {
-                        var AddItem = new DisplayOrderManagementItem();
+                        var AddItem = new DisplayBsOrderManagementItem();
                         AddItem.OrderItem = oItem;
                         AddItem.ProductItem = pItem;
 
-                        DisplayOrderManagementItems.Add(AddItem);
+                        DisplayItems.Add(AddItem);
                     }
-                    else //リレーションが存在する場合
+                    else
                     {
                         for (int i = 0; i < children.Count(); i++)
                         {
-                            var AddItem = new DisplayOrderManagementItem();
+                            var AddItem = new DisplayBsOrderManagementItem();
                             AddItem.OrderItem = oItem;
                             AddItem.ProductItem = pItem;
                             AddItem.RelationItem = children.ToList()[i];
@@ -626,7 +626,7 @@ namespace TTools.ViewModels
                                 AddItem.VendorItem = venderItems.Where(x => x.Id == AddItem.EItem.VendorId).First();
                             }
 
-                            DisplayOrderManagementItems.Add(AddItem);
+                            DisplayItems.Add(AddItem);
                         }
                     }
                 }
@@ -634,17 +634,8 @@ namespace TTools.ViewModels
 
             SetObservableProperties();
 
-            collectionView = CollectionViewSource.GetDefaultView(this.DisplayOrderManagementItems);
-            PropertyGroupDescription aa = new PropertyGroupDescription("OrderItem.伝票ＮＯ");
-
-            var d = new DrivedObject();
-            await Task.Run(async () =>
-            {
-                if (!d.CheckAccess())
-                {
-                    await d.Dispatcher.InvokeAsync(() => collectionView.GroupDescriptions.Add(aa));
-                }
-            });
+            collectionView = CollectionViewSource.GetDefaultView(DisplayItems);
+            collectionView.GroupDescriptions.Add(new PropertyGroupDescription("OrderItem.伝票ＮＯ"));
         }
 
 
@@ -654,7 +645,7 @@ namespace TTools.ViewModels
         private void SetObservableProperties()
         {
             //監視状態を設定 EItem
-            foreach (var x in DisplayOrderManagementItems.Where(x => x.EItem != null).Select(x => x.EItem))
+            foreach (var x in DisplayItems.Where(x => x.EItem != null).Select(x => x.EItem))
             {
                 var a = Observable.FromEventPattern<PropertyChangedEventHandler, PropertyChangedEventArgs>(
                     h => x.PropertyChanged += h,
@@ -663,7 +654,7 @@ namespace TTools.ViewModels
                     {
                         if (e.EventArgs.PropertyName == nameof(EItem.VendorId))
                         {
-                            var item = (DisplayOrderManagementItem)SelectedRowItem;
+                            var item = (DisplayBsOrderManagementItem)SelectedRowItem;
 
                             var vItem = venderItems.Where(y => y.Id == item.EItem.VendorId);
                             if (vItem.Count() != 0)
@@ -682,7 +673,7 @@ namespace TTools.ViewModels
                 ObservableList.Add(a);
             }
             //リレーション
-            foreach (var x in DisplayOrderManagementItems.Where(x => x.RelationItem != null).Select(x => x.RelationItem))
+            foreach (var x in DisplayItems.Where(x => x.RelationItem != null).Select(x => x.RelationItem))
             {
                 var a = Observable.FromEventPattern<PropertyChangedEventHandler, PropertyChangedEventArgs>(
                     h => x.PropertyChanged += h,
@@ -736,7 +727,7 @@ namespace TTools.ViewModels
         /// Relationに加えるEItemを選択するダイアログを表示
         /// </summary>
         /// <param name="ProductID"></param>
-        private void EItemSelect(List<DisplayOrderManagementItem> arg)
+        private void EItemSelect(List<DisplayBsOrderManagementItem> arg)
         {
             string ProductID = arg[0].ProductItem.ProductId.ToString();
 
@@ -787,7 +778,7 @@ namespace TTools.ViewModels
         /// <param name="productID"></param>
         /// <param name="eItemId"></param>
         /// <returns></returns>
-        private bool AddRelation(string productID, string eItemId, List<DisplayOrderManagementItem> arg)
+        private bool AddRelation(string productID, string eItemId, List<DisplayBsOrderManagementItem> arg)
         {
             UnReadObservables();
 
